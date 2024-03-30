@@ -125,6 +125,7 @@ async function createChildModel(req, res) {
 
 async function identifyChild(req, res) {
     try {
+        console.log(req.file);
         var token = req.body.token;
         const audioFile = req.file['path'];
         var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/', audioFile);
