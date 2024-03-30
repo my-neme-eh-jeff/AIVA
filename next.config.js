@@ -1,10 +1,19 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
- */
 await import("./src/env.js");
 
-/** @type {import("next").NextConfig} */
-const config = {};
+import createNextIntlPlugin from "next-intl/plugin";
+const withNextIntl = createNextIntlPlugin("./i18n/i18n.ts");
 
-export default config;
+/** @type {import("next").NextConfig} */
+const config = {
+  images: {
+    domains: ["lh3.googleusercontent.com"],
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+  
+};
+
+export default withNextIntl(config);

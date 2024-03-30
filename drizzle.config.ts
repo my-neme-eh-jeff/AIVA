@@ -1,6 +1,7 @@
 import { type Config } from "drizzle-kit";
 
 import { env } from "@/env";
+import { siteConfig } from "siteConfig";
 
 export default {
   schema: "./src/server/db/schema.ts",
@@ -8,5 +9,6 @@ export default {
   dbCredentials: {
     connectionString: env.DATABASE_URL,
   },
-  tablesFilter: ["csX_*"],
+  tablesFilter: [`${siteConfig.name}_*`],
+  out: "./dbMigrations",
 } satisfies Config;

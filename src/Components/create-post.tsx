@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { api } from "@/trpc/react";
+import { api } from "@/server/trpc/react";
 
 export function CreatePost() {
   const router = useRouter();
@@ -34,9 +34,9 @@ export function CreatePost() {
       <button
         type="submit"
         className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"
-        disabled={createPost.isPending}
+        disabled={createPost.isLoading}
       >
-        {createPost.isPending ? "Submitting..." : "Submit"}
+        {createPost.isLoading ? "Submitting..." : "Submit"}
       </button>
     </form>
   );
