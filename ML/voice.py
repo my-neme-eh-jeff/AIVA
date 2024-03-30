@@ -10,8 +10,6 @@ from pydub import AudioSegment
 
 app = Flask(__name__)
 AudioSegment.converter = r"/home/ubuntu/Codeshastra_TechTitans/ML/ffmpeg.exe"
-# Connect to MongoDB
-# Connect to MongoDB
 client = pymongo.MongoClient(
     "mongodb+srv://csx:csx_techtitans@mann.fu1ds7w.mongodb.net/?retryWrites=true&w=majority"
 )
@@ -22,11 +20,8 @@ def augment_audio(audio_file_path, num_augmentations=5):
     audio = AudioSegment.from_wav(audio_file_path)
     augmented_audio_files = []
     for i in range(num_augmentations):
-        # Randomly select pitch shift factor (between -0.5 and 0.5 semitones)
         pitch_shift = random.uniform(-0.5, 0.5)
-        # Randomly select speed change factor (between 0.8 and 1.2)
         speed_change = random.uniform(0.8, 1.2)
-        # Apply pitch shift and speed change
         augmented_audio = audio._spawn(
             audio.raw_data,
             overrides={
@@ -84,8 +79,6 @@ def home():
 
 @app.route("/voice-compare", methods=["POST"])
 def recognize_speaker_api():
-    # if "audioFile" not in request.files:
-    #     return jsonify({"error": "No audio file found"}), 400
     parent_token = request.form.get("parent_token")
     if not parent_token:
         return jsonify({"error": "No parent_token provided"}), 400
