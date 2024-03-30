@@ -7,31 +7,30 @@ import {
   TooltipTrigger,
 } from "@/Components/ui/tooltip";
 import { Button } from "@/Components/ui/button";
-import { Download, Mic, Trash } from "lucide-react";
+import { Download, Mic, Pause, Play, Send, Trash } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/utils/ui";
+import { motion, type Variants } from "framer-motion";
+import { toast } from "sonner";
+import axios from "axios";
+import { siteConfig } from "siteConfig";
 
 type Props = {
   className?: string;
   timerClassName?: string;
 };
-
 type Record = {
   id: number;
   name: string;
   file: any;
 };
-
 let recorder: MediaRecorder;
 let recordingChunks: BlobPart[] = [];
 let timerTimeout: NodeJS.Timeout;
 
-// Utility function to pad a number with leading zeros
 const padWithLeadingZeros = (num: number, length: number): string => {
   return String(num).padStart(length, "0");
 };
-
-// Utility function to download a blob
 const downloadBlob = (blob: Blob) => {
   const downloadLink = document.createElement("a");
   downloadLink.href = URL.createObjectURL(blob);
@@ -40,29 +39,29 @@ const downloadBlob = (blob: Blob) => {
   downloadLink.click();
   document.body.removeChild(downloadLink);
 };
-
-  
 export const AudioRecorderWithVisualizer = ({
   className,
   timerClassName,
 }: Props) => {
   const { theme } = useTheme();
-  // States
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isRecordingFinished, setIsRecordingFinished] =
     useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState(false); // Add this line to manage pause state
   const [timer, setTimer] = useState<number>(0);
   const [currentRecord, setCurrentRecord] = useState<Record>({
     id: -1,
     name: "",
     file: null,
   });
-  // Calculate the hours, minutes, and seconds from the timer
+  const [
+    loadingForSubmmittingAudioFileToFlaskServer,
+    setLoadingForSubmmittingAudioFileToFlaskServer,
+  ] = useState(false);
+
   const hours = Math.floor(timer / 3600);
   const minutes = Math.floor((timer % 3600) / 60);
   const seconds = timer % 60;
-
-  // Split the hours, minutes, and seconds into individual digits
   const [hourLeft, hourRight] = useMemo(
     () => padWithLeadingZeros(hours, 2).split(""),
     [hours],
@@ -75,7 +74,6 @@ export const AudioRecorderWithVisualizer = ({
     () => padWithLeadingZeros(seconds, 2).split(""),
     [seconds],
   );
-  // Refs
   const mediaRecorderRef = useRef<{
     stream: MediaStream | null;
     analyser: AnalyserNode | null;
@@ -132,26 +130,28 @@ export const AudioRecorderWithVisualizer = ({
           };
         })
         .catch((error) => {
-          alert(error);
+          toast.error("Oops! There was an unexpected error.");
           console.log(error);
         });
     }
   }
-  function stopRecording() {
-    recorder.onstop = () => {
+  async function stopRecording(submit: boolean) {
+    recorder.onstop = async () => {
       const recordBlob = new Blob(recordingChunks, {
         type: "audio/wav",
       });
-      downloadBlob(recordBlob);
+      if (submit) {
+        submitRecording(recordBlob);
+      } else {
+        downloadBlob(recordBlob);
+      }
       setCurrentRecord({
         ...currentRecord,
         file: window.URL.createObjectURL(recordBlob),
       });
       recordingChunks = [];
     };
-
     recorder.stop();
-
     setIsRecording(false);
     setIsRecordingFinished(true);
     setTimer(0);
@@ -160,17 +160,20 @@ export const AudioRecorderWithVisualizer = ({
   function resetRecording() {
     const { mediaRecorder, stream, analyser, audioContext } =
       mediaRecorderRef.current;
-
     if (mediaRecorder) {
       mediaRecorder.onstop = () => {
         recordingChunks = [];
       };
       mediaRecorder.stop();
     } else {
-      alert("recorder instance is null!");
+      toast.error("Could not reset recording please try again", {
+        action: (
+          <Button type="reset" onClick={() => resetRecording()}>
+            Retry
+          </Button>
+        ),
+      });
     }
-
-    // Stop the web audio context and the analyser node
     if (analyser) {
       analyser.disconnect();
     }
@@ -184,8 +187,6 @@ export const AudioRecorderWithVisualizer = ({
     setIsRecordingFinished(true);
     setTimer(0);
     clearTimeout(timerTimeout);
-
-    // Clear the animation frame and canvas
     cancelAnimationFrame(animationRef.current || 0);
     const canvas = canvasRef.current;
     if (canvas) {
@@ -197,58 +198,102 @@ export const AudioRecorderWithVisualizer = ({
       }
     }
   }
-  const handleSubmit = () => {
-    stopRecording();
+  const submitRecording = async (blob: Blob) => {
+    const loadingToast = toast.loading("Loading");
+    try {
+      const formData = new FormData();
+      formData.append("audio", blob, "audio.wav");
+      const { data } = await axios.post(
+        siteConfig.flaskBackendBaseUrl + "/transcription/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      console.log(data);
+      toast.success(`Language detected "${data.src_lang}"`);
+    } catch (err) {
+      toast.error("Oops an unexpected error occurred", {
+        action: (
+          <Button type="reset" onClick={() => submitRecording(blob)}>
+            Retry
+          </Button>
+        ),
+      });
+      console.log(err);
+    } finally {
+      toast.dismiss(loadingToast);
+    }
+  };
+  const play = () => {
+    if (mediaRecorderRef.current.mediaRecorder && isRecording && isPaused) {
+      console.log("playy started")
+      mediaRecorderRef.current.mediaRecorder.resume();
+      setIsPaused(false);
+    }
+  };
+  const pause = () => {
+    if (mediaRecorderRef.current.mediaRecorder && isRecording && !isPaused) {
+      console.log("paused")
+      mediaRecorderRef.current.mediaRecorder.pause();
+      setIsPaused(true);
+    }
   };
 
-  // Effect to update the timer every second
   useEffect(() => {
-    if (isRecording) {
+    if (isRecording && !isPaused) {
       timerTimeout = setTimeout(() => {
         setTimer(timer + 1);
       }, 1000);
     }
     return () => clearTimeout(timerTimeout);
-  }, [isRecording, timer]);
+  }, [isRecording, timer, isPaused]);
 
-  // Visualizer
   useEffect(() => {
     if (!canvasRef.current) return;
-
     const canvas = canvasRef.current;
     const canvasCtx = canvas.getContext("2d");
-    const WIDTH = canvas.width;
-    const HEIGHT = canvas.height;
-
+    const scale = window.devicePixelRatio; // Get the device pixel ratio, falling back to 1.
+    const width = canvas.clientWidth * scale;
+    const WIDTH = width;
+    const height = canvas.clientHeight * scale;
+    const HEIGHT = height;
+    canvas.width = width;
+    canvas.height = height;
+    canvasCtx?.scale(scale, scale); // Normalize the coordinate system to use css pixels.
     const drawWaveform = (dataArray: Uint8Array) => {
       if (!canvasCtx) return;
       canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-      canvasCtx.fillStyle = "#939393";
-
-      const barWidth = 1;
-      const spacing = 1;
+      canvasCtx.fillStyle = "#D3FD50";
+      const barWidth = 2;
+      const spacing = 0.5;
       const maxBarHeight = HEIGHT / 2.5;
       const numBars = Math.floor(WIDTH / (barWidth + spacing));
 
       for (let i = 0; i < numBars; i++) {
-        const barHeight = Math.pow(dataArray[i] / 128.0, 8) * maxBarHeight;
+        const barHeight = Math.pow(dataArray[i]! / 128.0, 8) * maxBarHeight;
         const x = (barWidth + spacing) * i;
         const y = HEIGHT / 2 - barHeight / 2;
         canvasCtx.fillRect(x, y, barWidth, barHeight);
       }
     };
-
     const visualizeVolume = () => {
       if (
         !mediaRecorderRef.current?.stream?.getAudioTracks()[0]?.getSettings()
           .sampleRate
       )
         return;
+      if (!isRecording || isPaused) {
+        cancelAnimationFrame(animationRef.current);
+        return;
+      }
+
       const bufferLength =
         (mediaRecorderRef.current?.stream?.getAudioTracks()[0]?.getSettings()
           .sampleRate as number) / 100;
       const dataArray = new Uint8Array(bufferLength);
-
       const draw = () => {
         if (!isRecording) {
           cancelAnimationFrame(animationRef.current || 0);
@@ -274,39 +319,75 @@ export const AudioRecorderWithVisualizer = ({
     return () => {
       cancelAnimationFrame(animationRef.current || 0);
     };
-  }, [isRecording, theme]);
+  }, [isRecording, theme, isPaused]);
 
+  const canvasVariants: Variants = {
+    hidden: { scale: 0, opacity: 0 },
+    show: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 80,
+        damping: 10,
+      },
+    },
+    exit: { scale: 0, opacity: 0 },
+  };
+  const tooltipVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    exit: { opacity: 0 },
+  };
+  const buttonVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
   return (
     <div
       className={cn(
-        "relative flex h-16 w-full max-w-5xl items-center justify-center gap-2 rounded-md",
-        {
-          "border p-1": isRecording,
-          "border-none p-0": !isRecording,
-        },
+        "mx-auto flex h-16 w-full max-w-5xl place-items-center gap-2 rounded-md transition-all duration-1000",
         className,
       )}
     >
-      {isRecording ? (
-        <Timer
-          hourLeft={hourLeft}
-          hourRight={hourRight}
-          minuteLeft={minuteLeft}
-          minuteRight={minuteRight}
-          secondLeft={secondLeft}
-          secondRight={secondRight}
-          timerClassName={timerClassName}
-        />
-      ) : null}
-      <canvas
+      <Timer
+        isPaused={isPaused}
+        pause={pause}
+        play={play}
+        hourLeft={hourLeft as unknown as string}
+        hourRight={hourRight as unknown as string}
+        minuteLeft={minuteLeft as unknown as string}
+        minuteRight={minuteRight as unknown as string}
+        secondLeft={secondLeft as unknown as string}
+        secondRight={secondRight as unknown as string}
+        timerClassName={timerClassName as unknown as string}
+        isRecording={isRecording as unknown as boolean}
+      />
+      <motion.canvas
+        initial="hidden"
+        animate={isRecording ? "show" : "hidden"}
+        exit="exit"
+        variants={canvasVariants}
+        className={`h-full w-full place-content-center place-items-center overflow-visible rounded-md border bg-background px-2 pb-3`}
         ref={canvasRef}
-        className={`h-full w-full bg-background ${
-          !isRecording ? "hidden" : "flex"
-        }`}
       />
       <div className="flex gap-2">
-        {/* ========== Delete recording button ========== */}
-        {isRecording ? (
+        <motion.div
+          variants={tooltipVariants}
+          initial="hidden"
+          animate={isRecording ? "show" : "hidden"}
+          exit="exit"
+        >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -315,7 +396,7 @@ export const AudioRecorderWithVisualizer = ({
                   size={"icon"}
                   variant={"destructive"}
                 >
-                  <Trash size={15} />
+                  <Trash size={15} color="red" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="m-2">
@@ -323,30 +404,72 @@ export const AudioRecorderWithVisualizer = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        ) : null}
+        </motion.div>
 
-        {/* ========== Start and send recording button ========== */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              {!isRecording ? (
-                <Button onClick={() => startRecording()} size={"icon"}>
-                  <Mic size={15} />
-                </Button>
-              ) : (
-                <Button onClick={handleSubmit} size={"icon"}>
-                  <Download size={15} />
-                </Button>
-              )}
+              <Button
+                isLoading={loadingForSubmmittingAudioFileToFlaskServer}
+                onClick={() =>
+                  !isRecording ? startRecording() : stopRecording(false)
+                }
+                color="primary"
+                size={"default"}
+              >
+                {!isRecording ? (
+                  <motion.div
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    variants={buttonVariants}
+                  >
+                    <Mic size={15} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    variants={buttonVariants}
+                  >
+                    <Download size={15} />
+                  </motion.div>
+                )}
+              </Button>
             </TooltipTrigger>
             <TooltipContent className="m-2">
               <span>
-                {" "}
-                {!isRecording ? "Start recording" : "Download recording"}{" "}
+                {!isRecording ? "Start recording" : "Download recording"}
               </span>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+
+        <motion.div
+          variants={tooltipVariants}
+          initial="hidden"
+          animate={isRecording ? "show" : "hidden"}
+          exit="exit"
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => stopRecording(true)}
+                  size={"icon"}
+                  variant={"default"}
+                  color="#17c964"
+                >
+                  <Send size={15} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="m-2">
+                <span>Send</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </motion.div>
       </div>
     </div>
   );
@@ -354,6 +477,7 @@ export const AudioRecorderWithVisualizer = ({
 
 const Timer = React.memo(
   ({
+    isPaused,
     hourLeft,
     hourRight,
     minuteLeft,
@@ -361,6 +485,9 @@ const Timer = React.memo(
     secondLeft,
     secondRight,
     timerClassName,
+    isRecording,
+    pause,
+    play,
   }: {
     hourLeft: string;
     hourRight: string;
@@ -369,35 +496,101 @@ const Timer = React.memo(
     secondLeft: string;
     secondRight: string;
     timerClassName?: string;
+    isRecording: boolean;
+    pause: () => void;
+    play: () => void;
+    isPaused: boolean;
   }) => {
+    const timerVariants: Variants = {
+      show: {
+        opacity: 1,
+        transition: {
+          ease: "easeIn",
+        },
+      },
+      hide: {
+        opacity: 0,
+      },
+      exit: { scale: 0, opacity: 0 },
+    };
+
     return (
-      <div
-        className={cn(
-          "absolute -top-12 left-0 flex items-center justify-center gap-0.5 rounded-md border p-1.5 font-mono font-medium text-foreground",
-          timerClassName,
-        )}
-      >
-        <span className="rounded-md bg-background p-0.5 text-foreground">
-          {hourLeft}
-        </span>
-        <span className="rounded-md bg-background p-0.5 text-foreground">
-          {hourRight}
-        </span>
-        <span>:</span>
-        <span className="rounded-md bg-background p-0.5 text-foreground">
-          {minuteLeft}
-        </span>
-        <span className="rounded-md bg-background p-0.5 text-foreground">
-          {minuteRight}
-        </span>
-        <span>:</span>
-        <span className="rounded-md bg-background p-0.5 text-foreground">
-          {secondLeft}
-        </span>
-        <span className="rounded-md bg-background p-0.5 text-foreground ">
-          {secondRight}
-        </span>
-      </div>
+      <>
+        <motion.div
+          variants={timerVariants}
+          animate={isRecording ? "show" : "hide"}
+          exit="exit"
+          initial="hide"
+          className={cn(
+            "absolute -top-12 mx-auto flex items-center justify-center gap-0.5 rounded-md border p-1.5 font-mono font-medium text-foreground",
+            timerClassName,
+          )}
+        >
+          <span className="rounded-md bg-background p-0.5 text-foreground">
+            {hourLeft}
+          </span>
+          <span className="rounded-md bg-background p-0.5 text-foreground">
+            {hourRight}
+          </span>
+          <span>:</span>
+          <span className="rounded-md bg-background p-0.5 text-foreground">
+            {minuteLeft}
+          </span>
+          <span className="rounded-md bg-background p-0.5 text-foreground">
+            {minuteRight}
+          </span>
+          <span>:</span>
+          <span className="rounded-md bg-background p-0.5 text-foreground">
+            {secondLeft}
+          </span>
+          <span className="rounded-md bg-background p-0.5 text-foreground ">
+            {secondRight}
+          </span>
+        </motion.div>
+        <motion.div
+          variants={timerVariants}
+          animate={isRecording ? "show" : "hide"}
+          exit="exit"
+          initial="hide"
+          className="flex gap-2"
+        >
+          {isPaused ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => play()}
+                    size={"lg"}
+                    variant={"outline"}
+                  >
+                    <Play size={15} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="m-2">
+                  <span>Click to Play</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={() => pause()}
+                    size={"lg"}
+                    variant={"outline"}
+                  >
+                    <Pause size={15} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="m-2">
+                  <span>Click to Pause</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </motion.div>
+      </>
     );
   },
 );

@@ -11,7 +11,7 @@ export default function HeroSection() {
   return (
     <>
       <div className="absolute -top-4 right-[11rem] -z-10 h-[20rem] w-[31.25rem] transform-gpu rounded-full bg-[#D3FD50]  blur-[10rem] dark:bg-[#d2fd505a] md:-top-0 md:h-[31.25rem] md:w-[30rem] md:blur-[20rem] lg:blur-[18rem] xl:w-[68.75rem]"></div>
-      <Divider className="hidden md:block md:absolute top-full" />
+      <Divider className="top-full hidden md:absolute md:block" />
       <div className="absolute inset-0 -z-10 w-full overflow-hidden bg-[linear-gradient(to_right,#80808012_1px,transparent_2px),linear-gradient(to_bottom,#80808012_1px,transparent_2px)] bg-[size:24px_24px]  md:h-[500px] lg:h-[743px] xl:h-screen"></div>
       <div className="z-30 flex flex-col items-center justify-center gap-4 py-8 md:py-10 ">
         <motion.div
@@ -30,16 +30,14 @@ export default function HeroSection() {
           >
             The Future of&nbsp;
           </h1>
-          <h1 className={titleVariants({ color: "yellow" })}>Chaos&nbsp;</h1>
-          <h1
-            className={cn(
-              titleVariants(),
-              "text-stone-500 dark:text-slate-300",
-            )}
-          >
-            automation via Voice Control &nbsp;
+          <br />
+          <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
+            automation&nbsp;
           </h1>
-          <h1 className={titleVariants({ color: "golden" })}>Cohesion&nbsp;</h1>
+          <h1 className={cn(titleVariants(), "")}>via&nbsp;</h1>
+          <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
+            Voice Control&nbsp;
+          </h1>
           <br />
           <h1
             className={cn(

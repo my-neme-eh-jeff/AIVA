@@ -1,11 +1,15 @@
 export const links = [
   {
-    title: "Voice Search Engine",
+    title: "Search Engine",
     href: "/",
   },
   {
     title: "Voice Terminal",
     href: "/",
+  },
+  {
+    title: "Settings",
+    href: "/settings",
   },
 ];
 

@@ -5,7 +5,7 @@ export const titleVariants = tv({
   variants: {
     color: {
       violet: "from-[#FF1CF7] to-[#b249f8]",
-      foreground: "dark:from-[#FFFFFF] dark:to-[#4B4B4B]",
+      foreground: "dark:from-[#ff0000] dark:to-[#453434]",
       yellow: "from-[#FF705B] to-[#FFB457]",
       golden: "from-[#FFD700] to-[#FFB457]",
       blue: "from-[#5EA2EF] to-[#0072F5]",
