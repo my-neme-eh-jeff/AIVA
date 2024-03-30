@@ -292,6 +292,7 @@ cython_debug/
 #.idea/
 ML/ffmpeg.exe
 ML/ffplay.exe
+ML/ffprobe.exe
 ML/VoiceDataset
 ML/Checkpoints
 ML/Dataset

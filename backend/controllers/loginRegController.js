@@ -101,6 +101,7 @@ async function createChildModel(req, res) {
     try {
         var name = req.body.name;
         var audioFile = req.file.path;
+        audioFile = audioFile+".wav";
         var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/',audioFile);
         const token = req.body.token;
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
