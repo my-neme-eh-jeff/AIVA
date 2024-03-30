@@ -21,9 +21,15 @@ const UserSchema = new Schema({
         type: String
     },
     isVerified: {
-        type: String,
+        type: Boolean,
         default: false
     },
+});
+
+const ChildSchema = new Schema({
+    parent: { type: UserSchema, required: true },
+    name: { type: String, required: true },
+    audioFile: { type: String, required: true }
 });
 
 // UserSchema.pre(
@@ -54,6 +60,7 @@ const validateUserInfo =  (data)=> {
     return schema.validate(data);
 }
 const UserModel = mongoose.model('users', UserSchema);
+const ChildModel = mongoose.model('childrens', ChildSchema);
 
 
 const ResetPwEmails = new Schema({
@@ -72,4 +79,4 @@ const validateResetInfo = async function (email) {
 
 const ResetPwEmailModel = mongoose.model('resetEmails', ResetPwEmails);
 
-module.exports = { UserModel, ResetPwEmailModel,validateResetInfo,validateUserInfo };
+module.exports = { UserModel,ChildModel, ResetPwEmailModel,validateResetInfo,validateUserInfo };
