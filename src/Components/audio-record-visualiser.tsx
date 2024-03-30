@@ -229,15 +229,13 @@ export const AudioRecorderWithVisualizer = ({
   };
   const play = () => {
     if (mediaRecorderRef.current.mediaRecorder && isRecording && isPaused) {
-      console.log("playy started")
-      mediaRecorderRef.current.mediaRecorder.resume();
+      recorder.resume();
       setIsPaused(false);
     }
   };
   const pause = () => {
     if (mediaRecorderRef.current.mediaRecorder && isRecording && !isPaused) {
-      console.log("paused")
-      mediaRecorderRef.current.mediaRecorder.pause();
+      recorder.pause();
       setIsPaused(true);
     }
   };
