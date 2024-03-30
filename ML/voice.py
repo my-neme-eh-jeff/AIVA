@@ -122,4 +122,4 @@ def recognize_speaker_api():
 
 if __name__ == "__main__":
     speaker_models = {}
-    app.run(debug=True, port=8090)
+    app.run(host='13.200.249.129',debug=True, port=8090)
