@@ -22,7 +22,7 @@ const UserSchema = new Schema({
     },
     isVerified: {
         type: String,
-        default: true
+        default: false
     },
 });
 

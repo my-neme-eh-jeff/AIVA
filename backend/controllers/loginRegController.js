@@ -65,9 +65,13 @@ async function loginController(req, res) {
                 const body = { _id: user._id, email: email };
                 const token = jwt.sign({ user: body }, process.env.JSON_KEY);
                 var isVerified = user.isVerified;
+                if(isVerified==false){
+                    user.isVerified=true;
+                    user.save();
+                }
                 //CHECK FOR ISVERIFIED IN FRONTEND ALSO IF NEEDED
-                if (isVerified==="true") {
-                    res.json({
+                // if (isVerified==="true") {
+                res.json({
                         success: true,
                         data:{
                         token,
@@ -76,12 +80,12 @@ async function loginController(req, res) {
                         login: true
                         }
                     })
-                }
-                else {
-                    var emailOutput=await emailVerificationController(email);
-                    console.log(emailOutput);
-                    return res.json({ redirectLink: `${req.headers.hostname}/email-verification-status` });//CHANGE LINK AS PER FRONTEND ROUTER
-                }
+                // }
+                // else {
+                //     var emailOutput=await emailVerificationController(email);
+                //     console.log(emailOutput);
+                //     return res.json({ redirectLink: `${req.headers.hostname}/email-verification-status` });//CHANGE LINK AS PER FRONTEND ROUTER
+                // }
             }
         }
     }
