@@ -6,8 +6,10 @@ import NextLink from "next/link";
 
 import { subtitleVariants, titleVariants } from "@/Components/variants";
 import { cn } from "@/utils/ui";
+import { useTranslations } from "next-intl";
 
 export default function HeroSection() {
+  const t = useTranslations("hero");
   return (
     <>
       <div className="absolute -top-4 right-[11rem] -z-10 h-[20rem] w-[31.25rem] transform-gpu rounded-full bg-[#D3FD50]  blur-[10rem] dark:bg-[#d2fd505a] md:-top-0 md:h-[31.25rem] md:w-[30rem] md:blur-[20rem] lg:blur-[18rem] xl:w-[68.75rem]"></div>
@@ -28,15 +30,15 @@ export default function HeroSection() {
               "text-stone-500 dark:text-slate-300",
             )}
           >
-            The Future of&nbsp;
+            {t("futureOf")}&nbsp;
           </h1>
           <br />
           <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
-            automation&nbsp;
+            {t("automation")}&nbsp;
           </h1>
-          <h1 className={cn(titleVariants(), "")}>via&nbsp;</h1>
+          <h1 className={cn(titleVariants(), "")}>{t("via")}&nbsp;</h1>
           <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
-            Voice Control&nbsp;
+            {t("voiceControl")}&nbsp;
           </h1>
           <br />
           <h1
@@ -45,16 +47,8 @@ export default function HeroSection() {
               "block font-thin text-stone-500 dark:text-slate-300",
             )}
           >
-            is Here&nbsp;
+            {t("isHere")}&nbsp;
           </h1>
-          {/* <h1
-            className={cn(
-              titleVariants(),
-              "text-stone-500 dark:text-slate-300",
-            )}
-          >
-            Game in Construction.
-          </h1> */}
           <motion.h2
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -67,7 +61,7 @@ export default function HeroSection() {
               "text-stone-800 dark:text-slate-500 ",
             )}
           >
-            For the specially abled, or, simple the lazy.
+            {t("tagline")}
           </motion.h2>
         </motion.div>
         <motion.div
@@ -91,7 +85,7 @@ export default function HeroSection() {
               variant: "shadow",
             })}
           >
-            Get started
+            {t("getStarted")}
           </Link>
           <Link
             as={NextLink}
@@ -102,7 +96,7 @@ export default function HeroSection() {
             })}
             href="/about"
           >
-            Learn More →
+            {t("learnMore")}
           </Link>
         </motion.div>
       </div>

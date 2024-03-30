@@ -1,15 +1,31 @@
 {
-  "PhotoViewer": {
-    "title": "Street photography",
-    "description": "Street photography captures real-life moments and human interactions in public places. It is a way to tell visual stories and freeze fleeting moments of time, turning the ordinary into the extraordinary.",
-    "orderBy": "{value, select, popular {Popular} latest {Latest} other {Unknown}}"
+  "Menu": {
+    "1": {
+      "title": "आवाज खोज इंजन",
+      "description": "वेब पर सब कुछ देखने के लिए"
+    },
+    "2": {
+      "title": "वॉयस टर्मिनल",
+      "description": "हमारी अनोखी ऑडियो कमांड्स सिस्टम का उपयोग करें"
+    },
+    "3": {
+      "title": "संपर्क करें",
+      "description": "हमसे संपर्क करें!"
+    },
+    "4": {
+      "title": "हमारे बारे में",
+      "description": "हमारे मिशन और टीम के बारे में जानें"
+    }
   },
-  "Pagination": {
-    "prev": "Previous page",
-    "next": "Next",
-    "info": "Page {page, number} of {totalPages, number} ({totalElements, plural, =1 {one result} other {# results}} in total)"
-  },
-  "Footer": {
-    "credits": "Photos are provided by <unsplash>Unsplash</unsplash>"
+  "menu": "मेनू",
+  "hero": {
+    "futureOf": "का भविष्य",
+    "automation": "स्वचालन",
+    "via": "के माध्यम से",
+    "voiceControl": "आवाज नियंत्रण",
+    "isHere": "यहाँ है",
+    "tagline": "विशेष रूप से सक्षम लोगों के लिए, या, बस आलसी लोगों के लिए।",
+    "getStarted": "शुरू हो जाओ",
+    "learnMore": "और जानें →"
   }
 }

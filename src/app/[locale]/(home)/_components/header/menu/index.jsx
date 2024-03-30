@@ -1,31 +1,41 @@
 "use client"
 import { motion } from 'framer-motion';
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { mountAnim, opacity, slideLeft } from '../anim';
 import Link from './link';
 import styles from './style.module.scss';
 
-const menu = [
-  {
-    title: "Voice Search Engine",
-    description: "To See Everything on the web",
-    images: ['projects1.jpg', 'projects2.jpg']
-  },
-  {
-    title: "Voice Terminal",
-    description: "Use our unique audio commands system",
-    images: ['agence1.jpg', 'agence2.jpg']
-  },
-  {
-    title: "Contact Us",
-    description: "Get in touch with us!",
-    images: ['contact1.jpg', 'contact2.jpg']
-  }
-]
 
 export default function index({ closeMenu }) {
+  const t = useTranslations("Menu");
+  const menu = [
+    {
+      title: t("1.title"),
+      description: t("1.description"),
+      images: ['search-engine-icon-1.webp', 'search-engine-icon-2.png'],
+      href: "/dashboard"
+    },
+    {
+      title: t("2.title"),
+      description: t("2.description"),
+      images: ['terminal-icon-1.png', 'terminal-icon-2.png'],
+      href: "/"
+    },
+    {
+      title: t("3.title"),
+      description: t("3.description"),
+      images: ['contact1.jpg', 'contact2.jpg'],
+      href: "/contact"
+    },
+    {
+      title: t("4.title"),
+      description: t("4.description"),
+      images: ['about1.jpg', 'about2.jpg'],
+      href: "/about"
+    }
+  ]
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -56,7 +66,7 @@ export default function index({ closeMenu }) {
       <div className={styles.body}>
         {
           menu.map((el, index) => {
-            return <Link data={el} index={index} key={index} />
+            return <Link data={el} index={index} key={index} href={el.href} />
           })
         }
       </div>

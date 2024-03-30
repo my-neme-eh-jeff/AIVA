@@ -1,15 +1,31 @@
 {
-  "PhotoViewer": {
-    "title": "Street photography",
-    "description": "Street photography captures real-life moments and human interactions in public places. It is a way to tell visual stories and freeze fleeting moments of time, turning the ordinary into the extraordinary.",
-    "orderBy": "{value, select, popular {Popular} latest {Latest} other {Unknown}}"
+  "Menu": {
+    "1": {
+      "title": "Voice Search Engine",
+      "description": "To See Everything on the web"
+    },
+    "2": {
+      "title": "Voice Terminal",
+      "description": "Use our unique audio commands system"
+    },
+    "3": {
+      "title": "Contact Us",
+      "description": "Get in touch with us!"
+    },
+    "4": {
+      "title": "About Us",
+      "description": "Learn more about our mission and team"
+    }
   },
-  "Pagination": {
-    "prev": "Previous page",
-    "next": "Next",
-    "info": "Page {page, number} of {totalPages, number} ({totalElements, plural, =1 {one result} other {# results}} in total)"
-  },
-  "Footer": {
-    "credits": "Photos are provided by <unsplash>Unsplash</unsplash>"
+  "menu": "Menu",
+  "hero": {
+    "futureOf": "The Future of",
+    "automation": "automation",
+    "via": "via",
+    "voiceControl": "Voice Control",
+    "isHere": "is Here",
+    "tagline": "For the specially abled, or, simply the lazy.",
+    "getStarted": "Get started",
+    "learnMore": "Learn More →"
   }
 }

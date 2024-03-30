@@ -18,6 +18,10 @@ import { siteConfig } from "siteConfig";
 type Props = {
   className?: string;
   timerClassName?: string;
+  messageResponse: string[];
+  audioFileResponse: string[];
+  setMessageResponse: React.Dispatch<React.SetStateAction<string[]>>;
+  setAudioFileResponse: React.Dispatch<React.SetStateAction<string[]>>;
 };
 type Record = {
   id: number;
@@ -42,12 +46,16 @@ const downloadBlob = (blob: Blob) => {
 export const AudioRecorderWithVisualizer = ({
   className,
   timerClassName,
+  messageResponse,
+  audioFileResponse,
+  setMessageResponse,
+  setAudioFileResponse,
 }: Props) => {
   const { theme } = useTheme();
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isRecordingFinished, setIsRecordingFinished] =
     useState<boolean>(false);
-  const [isPaused, setIsPaused] = useState(false); // Add this line to manage pause state
+  const [isPaused, setIsPaused] = useState(false);
   const [timer, setTimer] = useState<number>(0);
   const [currentRecord, setCurrentRecord] = useState<Record>({
     id: -1,
@@ -58,7 +66,6 @@ export const AudioRecorderWithVisualizer = ({
     loadingForSubmmittingAudioFileToFlaskServer,
     setLoadingForSubmmittingAudioFileToFlaskServer,
   ] = useState(false);
-
   const hours = Math.floor(timer / 3600);
   const minutes = Math.floor((timer % 3600) / 60);
   const seconds = timer % 60;
@@ -200,8 +207,10 @@ export const AudioRecorderWithVisualizer = ({
   }
   const submitRecording = async (blob: Blob) => {
     const loadingToast = toast.loading("Loading");
+    let loadingToast2;
     try {
       const formData = new FormData();
+      const clientAudio = URL.createObjectURL(blob);
       formData.append("audio", blob, "audio.wav");
       const { data } = await axios.post(
         siteConfig.flaskBackendBaseUrl + "/transcription/",
@@ -212,8 +221,24 @@ export const AudioRecorderWithVisualizer = ({
           },
         },
       );
-      console.log(data);
       toast.success(`Language detected "${data.src_lang}"`);
+      setMessageResponse((prev) => [...prev, data.src, data.message]);
+      toast.dismiss(loadingToast);
+      loadingToast2 = toast.loading("Transcribing, please wait a few seconds");
+      const resp = await fetch(siteConfig.flaskBackendBaseUrl + "/labs-tts/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Specify JSON content type
+        },
+        body: JSON.stringify({
+          text: data.message,
+          emotion: "Cheerful and Proffessional",
+        }),
+      });
+      const responseData = await resp.blob();
+      const audioUrl = URL.createObjectURL(responseData);
+      setAudioFileResponse((prev) => [...prev, clientAudio, audioUrl]);
+      console.log(audioUrl);
     } catch (err) {
       toast.error("Oops an unexpected error occurred", {
         action: (
@@ -225,8 +250,28 @@ export const AudioRecorderWithVisualizer = ({
       console.log(err);
     } finally {
       toast.dismiss(loadingToast);
+      toast.dismiss(loadingToast2);
     }
   };
+  useEffect(() => {
+    const handleKeyDown = (event: any) => {
+      if (event.ctrlKey && event.key.toLowerCase() === "m") {
+        event.preventDefault();
+        if (!isRecording) {
+          startRecording();
+        }
+      }
+      if (event.ctrlKey && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        if (isRecording) {
+          stopRecording(false);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isRecording]); // Dependency array ensures this effect runs only when `isRecording` state changes
+
   const play = () => {
     if (mediaRecorderRef.current.mediaRecorder && isRecording && isPaused) {
       recorder.resume();
@@ -240,6 +285,9 @@ export const AudioRecorderWithVisualizer = ({
     }
   };
 
+  useEffect(() => {
+    console.log(audioFileResponse);
+  }, [audioFileResponse]);
   useEffect(() => {
     if (isRecording && !isPaused) {
       timerTimeout = setTimeout(() => {
@@ -358,6 +406,11 @@ export const AudioRecorderWithVisualizer = ({
         className,
       )}
     >
+      {audioFileResponse.map((audio1, index) => {
+        return (
+          <audio key={index} src={audio1} controls className="mb-2"></audio>
+        );
+      })}
       <Timer
         isPaused={isPaused}
         pause={pause}

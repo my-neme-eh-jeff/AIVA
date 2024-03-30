@@ -1,14 +1,14 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 
-import { TRPCReactProvider } from "@/server/trpc/react";
-import { siteConfig } from "siteConfig";
-import { UIProvider } from "@/Hooks/Providers/NextUIProvider";
 import AuthSessionProvider from "@/Hooks/Providers/AuthSessionProvider";
+import { UIProvider } from "@/Hooks/Providers/NextUIProvider";
+import { TRPCReactProvider } from "@/server/trpc/react";
 import { cn } from "@/utils/ui";
-import type { Author } from "next/dist/lib/metadata/types/metadata-types";
 import { GeistSans } from "geist/font/sans";
+import type { Author } from "next/dist/lib/metadata/types/metadata-types";
+import { siteConfig } from "siteConfig";
+import { NextIntlClientProvider, useMessages } from "next-intl";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -46,6 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
+  const messages = useMessages();
+
   return (
     <html
       lang={locale}
@@ -62,7 +64,9 @@ export default function RootLayout({
                 children,
               }}
             >
-              {children}
+              <NextIntlClientProvider locale={locale} messages={messages}>
+                {children}
+              </NextIntlClientProvider>
             </UIProvider>
           </AuthSessionProvider>
         </TRPCReactProvider>

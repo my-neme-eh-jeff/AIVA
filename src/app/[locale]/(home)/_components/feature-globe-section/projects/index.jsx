@@ -6,34 +6,54 @@ import Descriptions from './descriptions';
 
 const data = [
     {
-        title: "Ford",
-        description: "Working on the Next-Generation HMI Experience without no driving experience.",
-        speed: 0.5
-    },
-    {
-        title: "UFC",
-        description: "Developed the Future of UFC Sports Ecosystem despite not being a sports fan.",
-        speed: 0.5
-    },
-    {
-        title: "Lincoln",
-        description: "Defined the visual concept and design language for the Lincoln Zephyr 2022 but never seen it in real life.",
-        speed: 0.67
-    },
-    {
-        title: "Royal Caribbean",
-        description: "I was just one person on a massive team that created an entire Royal Caribbean eco-system.",
+        title: "Experience Unmatched",
+        description: "Dive into an era where your voice commands transcend reality, offering unparalleled precision in speech recognition, amidst the ever-present noise of life's hustle.",
         speed: 0.8
     },
     {
-        title: "Sleepiq",
-        description: "Designed a 1M+ users product utilizing my best personal experience: sleeping.",
-        speed: 0.8
+        title: "Global Voice Automation",
+        description: "Explore the globe with a voice assistant that understands the nuances of over 30 languages, adapting its comprehension to your unique vocal signature for an intimate digital experience.",
+        speed: 0.82
+    },
+    // {
+    //     title: "Automation Unleashed",
+    //     description: "Unleash the full potential of your workflow with cutting-edge automation, where natural language evolves into powerful commands executed with ease and efficiency.",
+    //     speed: 0.85
+    // },
+    {
+        title: "For Next-Level productivity",
+        description: "Elevate to the next level with a voice assistant that transforms terminal commands into conversations, merging intuition with technology to revolutionize your digital dialogue.",
+        speed: 0.88
     },
     {
-        title: "NFL",
-        description: "Explored the Future of Fantasy Football while being in a country where football means a total different sport.",
-        speed: 0.8
+        title: "Interactive Experiences",
+        description: "Step into interactive realms where web searches are customized treasures, revealed through the lens of your personal inquiries, all displayed in an intuitive browser interface.",
+        speed: 0.9
+    },
+    {
+        title: "Through Intelligent",
+        description: "Navigate through your tasks with an intelligence that anticipates your needs, offering smart suggestions and executing a variety of functions based on your voice inputs.",
+        speed: 0.92
+    },
+    {
+        title: "Task Matching",
+        description: "Match your verbal commands with the assistant’s vast repertoire of tasks, ensuring that even the most complex requests find their resolution in the blink of an eye.",
+        speed: 0.94
+    },
+    // {
+    //     title: "And Intuitive UI,",
+    //     description: "Interact with an interface designed not just for the eye but for the ear, blending visual beauty with auditory elegance for a user experience that's as intuitive as it is stunning.",
+    //     speed: 0.96
+    // },
+    // {
+    //     title: "Ensuring Rapid",
+    //     description: "Guaranteeing swift responses and peak performance, this assistant is powered by the most efficient AI/ML algorithms, ensuring that your commands are met with instant action.",
+    //     speed: 0.98
+    // },
+    {
+        title: "Respecting Your Privacy,",
+        description: "Conclude your journey with the assurance of stringent privacy measures, where your voice activates not just commands but a shield that guards your personal data with utmost integrity.",
+        speed: 1
     }
 ]
 
@@ -41,8 +61,8 @@ export default function Projects() {
     const [selectedProject, setSelectedProject] = useState(null)
     return (
         <div className={styles.container}>
-            <Titles data={data} setSelectedProject={setSelectedProject}/>
-            <Descriptions data={data} selectedProject={selectedProject}/>
+            <Titles data={data} setSelectedProject={setSelectedProject} />
+            <Descriptions data={data} selectedProject={selectedProject} />
         </div>
     )
 }
