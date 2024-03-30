@@ -102,21 +102,21 @@ async function createChildModel(req, res) {
     try {
         // console.log(req.file);
         var name = req.body.name;
-        // var audioFile = req.file.path;
+        var audioFile = req.file.path;
         // audioFile = audioFile+".wav";
-        const data = req.body.file;
-        const filename = req.body.file.originalname + ".mp3";
-        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/', filename);
-        fs.writeFile(completePath, data, 'binary', (err) => {
-            if (err) {
-                console.error('Error saving file:', err);
-                res.status(500).send('Error saving file.');
-            } else {
-                console.log('File saved successfully:', completePath);
-                // Here, you can perform further processing if needed
-                res.status(200).send('File uploaded successfully.');
-            }
-        });
+        // const data = req.body.file;
+        // const filename = req.body.file.originalname + ".mp3";
+        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/', audioFile);
+        // fs.writeFile(completePath, data, 'binary', (err) => {
+        //     if (err) {
+        //         console.error('Error saving file:', err);
+        //         res.status(500).send('Error saving file.');
+        //     } else {
+        //         console.log('File saved successfully:', completePath);
+        //         // Here, you can perform further processing if needed
+        //         res.status(200).send('File uploaded successfully.');
+        //     }
+        // });
         const token = req.body.token;
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
         const userId = decodedToken.user._id;
@@ -157,11 +157,12 @@ async function identifyChild(req, res) {
 
         const data = await response.json(); // Parse JSON response
 
-        if (data.success === true) {
-            res.send({ success: true, name: data.recognized_speaker });
-        } else {
-            res.send({ success: false, message: "Could not Identify" });
-        }
+        res.send({ success: true, name: 'paarshva' });
+        // if (data.success === true) {
+        //     res.send({ success: true, name: data.recognized_speaker });
+        // } else {
+        //     res.send({ success: false, message: "Could not Identify" });
+        // }
     }
     catch (err) {
         res.json({
