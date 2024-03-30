@@ -27,10 +27,28 @@ const UserSchema = new Schema({
 });
 
 const ChildSchema = new Schema({
-    parent: { type: UserSchema, required: true },
+    parent: { type: String, required: true },
     name: { type: String, required: true },
     audioFile: { type: String, required: true }
 });
+
+ChildSchema.methods.sendAudioFileToAPI = async function (token) {
+    const child = this;
+
+    const response = await fetch('http://13.200.249.129:8090/voice-compare', {
+        method: 'POST',
+        body: JSON.stringify({ audioFile: this.audioFile, parent_token: token }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if (response.success === true) {
+        return true;
+    } else {
+        return false;
+    }
+}   
+
 
 // UserSchema.pre(
 //     'save',
@@ -61,7 +79,6 @@ const validateUserInfo =  (data)=> {
 }
 const UserModel = mongoose.model('users', UserSchema);
 const ChildModel = mongoose.model('childrens', ChildSchema);
-
 
 const ResetPwEmails = new Schema({
     email: { type: String, required: true }

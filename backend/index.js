@@ -26,6 +26,7 @@ app.use('/', loginRoutes);
 app.get('/home', function (req, res) {
     res.send("Welcome to the home page");
 });
+// app.use(express.static('public'));
 // app.use('/admin', adminRoutes);
 app.use('/file',fileUploadRoutes);
 // app.use('/chat',chatRoutes);

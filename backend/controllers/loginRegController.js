@@ -3,7 +3,7 @@ const moment = require('moment/moment');
 const sendemail = require('../middlewares/emailer');
 const { base64Decode, base64Encode, sha256, hashPw, verifyPw } = require('../middlewares/encDecScript');
 
-const { UserModel, ResetPwEmailModel, validateResetInfo, validateUserInfo } = require("../models/userModel");
+const { UserModel, ChildModel, ResetPwEmailModel, validateResetInfo, validateUserInfo } = require("../models/userModel");
 
 async function signUpController(req, res) {
     try {
@@ -14,28 +14,28 @@ async function signUpController(req, res) {
         var access_lvl = req.params.role || 0;
         // console.log(req.body);
         // const user=new UserModel;
-        const {validate} = validateUserInfo({ fname, lname, email, password, access_lvl });
+        const { validate } = validateUserInfo({ fname, lname, email, password, access_lvl });
         if (validate) {
             res.json({
                 success: false,
-                data:{message: validate, signup: false}
+                data: { message: validate, signup: false }
             })
         }
         else {
-            const {passwordHash} = await hashPw(password);
-            password=passwordHash;
+            const { passwordHash } = await hashPw(password);
+            password = passwordHash;
             const user = await UserModel.create({ fname, lname, email, password, access_lvl });
             user.save();
             res.json({
                 success: true,
-                data:{user: req.body, signup: true}
+                data: { user: req.body, signup: true }
             });
         }
     }
     catch (err) {
         res.json({
             success: false,
-            data: {error: "SignUp Controller Error" + err}
+            data: { error: "SignUp Controller Error" + err }
         });
     }
 }
@@ -49,7 +49,7 @@ async function loginController(req, res) {
         if (!user) {
             res.json({
                 success: true,
-                data:{message: "Email Not Found!", login: false}
+                data: { message: "Email Not Found!", login: false }
             });
         }
         else {
@@ -57,7 +57,7 @@ async function loginController(req, res) {
             if (!validate) {
                 res.json({
                     success: true,
-                    data:{message: "Wrong Password! Please Try Again!", login: false}
+                    data: { message: "Wrong Password! Please Try Again!", login: false }
                 })
             }
             else {
@@ -65,21 +65,21 @@ async function loginController(req, res) {
                 const body = { _id: user._id, email: email };
                 const token = jwt.sign({ user: body }, process.env.JSON_KEY);
                 var isVerified = user.isVerified;
-                if(isVerified==false){
-                    user.isVerified=true;
+                if (isVerified == false) {
+                    user.isVerified = true;
                     user.save();
                 }
                 //CHECK FOR ISVERIFIED IN FRONTEND ALSO IF NEEDED
                 // if (isVerified==="true") {
                 res.json({
-                        success: true,
-                        data:{
+                    success: true,
+                    data: {
                         token,
                         access_lvl,
                         isVerified,
                         login: true
-                        }
-                    })
+                    }
+                })
                 // }
                 // else {
                 //     var emailOutput=await emailVerificationController(email);
@@ -92,8 +92,51 @@ async function loginController(req, res) {
     catch (err) {
         res.json({
             success: false,
-            data:{error: "Login Controller Error" + err}
+            data: { error: "Login Controller Error" + err }
         });
+    }
+}
+
+async function createChildModel(req, res) {
+    try {
+        var name = req.body.name;
+        var audioFile = req.file.path;
+        var completePath = __dirname +"\\"+audioFile;
+        const token = req.body.token;
+        const decodedToken = jwt.verify(token, process.env.JSON_KEY);
+        const userId = decodedToken.user._id;
+        // const user = await UserModel.findById(userId);
+        const child = await ChildModel.create({ name, audioFile: completePath, parent: userId });
+        child.save();
+        res.json({
+            success: true,
+            data: { child }
+        });
+    }
+    catch (err) {
+        res.json({
+            success: false,
+            data: { error: "Child Creation Error" + err }
+        });
+    }
+}
+
+async function getChildren(req,res){
+    try{
+        var token = req.params.token;
+        const decodedToken = jwt.verify(token, process.env.JSON_KEY);
+        const userId = decodedToken.user._id;
+        const children = await ChildModel.find({ parent: userId });
+        res.json({
+            success: true,
+            data: { children }
+        });
+    }
+    catch(err){
+        res.json({
+            success:false,
+            data:{error:"Child Getting Error " + err}
+        })
     }
 }
 
@@ -124,7 +167,7 @@ async function pwResetEmailController(req, res) {
                 resetPw.save();
 
                 //Send Email
-                sendemail(email,{email,title:"HackNiche",link:`http://localhost:8080/password-change/${ident}/${today}-${hash}`}, '../middlewares/requestResetPassword.handlebars');
+                sendemail(email, { email, title: "HackNiche", link: `http://localhost:8080/password-change/${ident}/${today}-${hash}` }, '../middlewares/requestResetPassword.handlebars');
 
                 res.json({
                     message: "Password Reset Link Sent to Your Email"
@@ -230,7 +273,7 @@ async function emailVerificationController(email) {
             const hash = sha256(JSON.stringify(data), process.env.EMAIL_HASH);
 
             //SEND EMAIL
-            sendemail(email,{email,title:"HackNiche",link:`http://localhost:8080/email-verification/${ident}/${hash}`}, '../middlewares/emailVerification.handlebars');
+            sendemail(email, { email, title: "HackNiche", link: `http://localhost:8080/email-verification/${ident}/${hash}` }, '../middlewares/emailVerification.handlebars');
 
             return {
                 message: "Verification Mail Sent Successfully"
@@ -238,7 +281,7 @@ async function emailVerificationController(email) {
         }
     }
     catch (err) {
-        console.log("Email Verification Controller Error"+err)
+        console.log("Email Verification Controller Error" + err)
         return {
             error: "Email Verification Controller Error" + err
         }
@@ -268,7 +311,7 @@ async function emailLinkVerifier(req, res) {
             });
         }
 
-        user.isVerified=true;
+        user.isVerified = true;
         user.save();
 
         return res.json({ redirectLink: `${req.headers.hostname}/login` }); //CHANGE ROUTING LATER
@@ -283,4 +326,4 @@ async function emailLinkVerifier(req, res) {
 }
 
 
-module.exports = { signUpController, loginController, pwResetEmailController, pwLinkVerifier, pwResetController, emailVerificationController, emailLinkVerifier }
+module.exports = { signUpController, loginController, createChildModel, getChildren, pwResetEmailController, pwLinkVerifier, pwResetController, emailVerificationController, emailLinkVerifier }
