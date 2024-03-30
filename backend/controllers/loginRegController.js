@@ -101,7 +101,7 @@ async function createChildModel(req, res) {
     try {
         var name = req.body.name;
         var audioFile = req.file.path;
-        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/uploads/',audioFile);
+        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/',audioFile);
         const token = req.body.token;
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
         const userId = decodedToken.user._id;
@@ -125,7 +125,7 @@ async function identifyChild(req, res) {
     try {
         var token = req.body.token;
         const audioFile = req.file['path'];
-        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/uploads/', audioFile);
+        var completePath = path.join('/home/ubuntu/Codeshastra_TechTitans/backend/', audioFile);
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
         const userId = decodedToken.user._id;
         // console.log(userId)
