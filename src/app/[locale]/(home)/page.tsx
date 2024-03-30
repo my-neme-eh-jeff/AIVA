@@ -13,10 +13,10 @@ export default async function Home() {
       <div>
         <FeatureGlobeSection />
       </div>
-      <div className="mt-32">
+      <div>
         <PhoneSection />
       </div>
-      <div className="mt-24">
+      <div className="mt-2">
         <FAQSection />
       </div>
       <div className="mb-48">

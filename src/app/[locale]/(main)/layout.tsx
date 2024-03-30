@@ -3,7 +3,7 @@ import { redirect } from "@/app/navigation";
 
 //components
 import { getServerAuthSession } from "@/server/auth";
-import Index from "./_components/Header";
+import Navbar from "./_components/Header";
 
 export default async function MainLayout({
   children,
@@ -16,8 +16,8 @@ export default async function MainLayout({
   // }
   return (
     <>
-      <Index />
-      <main>{children}</main>
+      <Navbar />
+      <main className="mr-40 mt-10">{children}</main>
     </>
   );
 }

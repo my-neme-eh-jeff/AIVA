@@ -36,6 +36,7 @@ export default function HeroSection() {
           <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
             {t("automation")}&nbsp;
           </h1>
+          <br />
           <h1 className={cn(titleVariants(), "")}>{t("via")}&nbsp;</h1>
           <h1 className={cn(titleVariants({ color: "foreground" }), "")}>
             {t("voiceControl")}&nbsp;

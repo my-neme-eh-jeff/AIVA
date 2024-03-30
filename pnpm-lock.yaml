@@ -104,6 +104,9 @@ dependencies:
   react-intersection-observer:
     specifier: ^9.8.1
     version: 9.8.1(react-dom@18.2.0)(react@18.2.0)
+  react-player:
+    specifier: ^2.15.1
+    version: 2.15.1(react@18.2.0)
   react-speech-recognition:
     specifier: ^3.10.0
     version: 3.10.0(react@18.2.0)
@@ -6187,6 +6190,10 @@ packages:
   /lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
+  /load-script@1.0.0:
+    resolution: {integrity: sha512-kPEjMFtZvwL9TaZo0uZ2ml+Ye9HUMmPwbYRJ324qF9tqMejwykJ5ggTyvzmrbBeapCAbk98BSbTeovHEEP1uCA==}
+    dev: false
+
   /locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
@@ -6264,6 +6271,10 @@ packages:
     dependencies:
       '@types/three': 0.162.0
       three: 0.163.0
+    dev: false
+
+  /memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
     dev: false
 
   /memoizee@0.4.15:
@@ -6991,6 +7002,10 @@ packages:
       react: 18.2.0
     dev: false
 
+  /react-fast-compare@3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
+    dev: false
+
   /react-icons@5.0.1(react@18.2.0):
     resolution: {integrity: sha512-WqLZJ4bLzlhmsvme6iFdgO8gfZP17rfjYEJ2m9RsZjZ+cc4k1hTzknEz63YS1MeT50kVzoa1Nz36f4BEx+Wigw==}
     peerDependencies:
@@ -7017,6 +7032,19 @@ packages:
 
   /react-merge-refs@2.1.1:
     resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
+    dev: false
+
+  /react-player@2.15.1(react@18.2.0):
+    resolution: {integrity: sha512-ni1XFuYZuhIKKdeFII+KRLmIPcvCYlyXvtSMhNOgssdfnSovmakBtBTW2bxowPvmpKy5BTR4jC4CF79ucgHT+g==}
+    peerDependencies:
+      react: '>=16.6.0'
+    dependencies:
+      deepmerge: 4.3.1
+      load-script: 1.0.0
+      memoize-one: 5.2.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-fast-compare: 3.2.2
     dev: false
 
   /react-reconciler@0.27.0(react@18.2.0):

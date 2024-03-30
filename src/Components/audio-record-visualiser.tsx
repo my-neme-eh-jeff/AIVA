@@ -142,14 +142,14 @@ export const AudioRecorderWithVisualizer = ({
         });
     }
   }
-  async function stopRecording(submit: boolean) {
+  async function stopRecording(submit: boolean, doNothing = false) {
     recorder.onstop = async () => {
       const recordBlob = new Blob(recordingChunks, {
         type: "audio/wav",
       });
-      if (submit) {
+      if (submit && !doNothing) {
         submitRecording(recordBlob);
-      } else {
+      } else if (!submit && !doNothing) {
         downloadBlob(recordBlob);
       }
       setCurrentRecord({
@@ -261,16 +261,28 @@ export const AudioRecorderWithVisualizer = ({
           startRecording();
         }
       }
+      if (event.ctrlKey && event.key.toLowerCase() === "t") {
+        event.preventDefault();
+        if (isRecording) {
+          stopRecording(false, true);
+        }
+      }
       if (event.ctrlKey && event.key.toLowerCase() === "s") {
         event.preventDefault();
         if (isRecording) {
-          stopRecording(false);
+          stopRecording(true);
+        }
+      }
+      if (event.ctrlKey && event.key.toLowerCase() === "enter") {
+        event.preventDefault();
+        if (isRecording) {
+          stopRecording(true, false);
         }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isRecording]); // Dependency array ensures this effect runs only when `isRecording` state changes
+  }, [isRecording]);
 
   const play = () => {
     if (mediaRecorderRef.current.mediaRecorder && isRecording && isPaused) {
@@ -406,11 +418,6 @@ export const AudioRecorderWithVisualizer = ({
         className,
       )}
     >
-      {audioFileResponse.map((audio1, index) => {
-        return (
-          <audio key={index} src={audio1} controls className="mb-2"></audio>
-        );
-      })}
       <Timer
         isPaused={isPaused}
         pause={pause}
@@ -439,25 +446,25 @@ export const AudioRecorderWithVisualizer = ({
           animate={isRecording ? "show" : "hidden"}
           exit="exit"
         >
-          <TooltipProvider>
+          <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   onClick={resetRecording}
-                  size={"icon"}
-                  variant={"destructive"}
+                  className=" bg-red-600 hover:bg-red-600 focus:bg-red-600 active:bg-red-600"
+                  size={"default"}
                 >
-                  <Trash size={15} color="red" />
+                  <Trash size={15} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="m-2">
+              <TooltipContent className="m-2 bg-red-600 hover:bg-red-600 focus:bg-red-600 active:bg-red-600">
                 <span> Reset recording</span>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </motion.div>
 
-        <TooltipProvider>
+        <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -465,7 +472,6 @@ export const AudioRecorderWithVisualizer = ({
                 onClick={() =>
                   !isRecording ? startRecording() : stopRecording(false)
                 }
-                color="primary"
                 size={"default"}
               >
                 {!isRecording ? (
@@ -503,19 +509,18 @@ export const AudioRecorderWithVisualizer = ({
           animate={isRecording ? "show" : "hidden"}
           exit="exit"
         >
-          <TooltipProvider>
+          <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   onClick={() => stopRecording(true)}
-                  size={"icon"}
-                  variant={"default"}
-                  color="#17c964"
+                  size={"default"}
+                  className="bg-[#17c964] hover:bg-[#17c964] focus:bg-[#17c964] active:bg-[#17c964] "
                 >
                   <Send size={15} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="m-2">
+              <TooltipContent className="m-2 bg-[#17c964]">
                 <span>Send</span>
               </TooltipContent>
             </Tooltip>
@@ -606,7 +611,7 @@ const Timer = React.memo(
           className="flex gap-2"
         >
           {isPaused ? (
-            <TooltipProvider>
+            <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -617,13 +622,13 @@ const Timer = React.memo(
                     <Play size={15} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="m-2">
+                <TooltipContent className="m-2 bg-gray-700">
                   <span>Click to Play</span>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ) : (
-            <TooltipProvider>
+            <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -634,7 +639,7 @@ const Timer = React.memo(
                     <Pause size={15} />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="m-2">
+                <TooltipContent className="m-2 bg-gray-700">
                   <span>Click to Pause</span>
                 </TooltipContent>
               </Tooltip>

@@ -19,13 +19,89 @@
   },
   "menu": "Menu",
   "hero": {
-    "futureOf": "The Future of",
-    "automation": "automation",
-    "via": "via",
-    "voiceControl": "Voice Control",
-    "isHere": "is Here",
-    "tagline": "For the specially abled, or, simply the lazy.",
+    "futureOf": "AI powered",
+    "automation": "voice assistant",
+    "via": "empowering",
+    "voiceControl": "automated",
+    "isHere": "query resolution",
+    "tagline": "For the efficiency freaks, or, simply the lazy.",
     "getStarted": "Get started",
     "learnMore": "Learn More →"
+  },
+  "faq": {
+    "header": "Still confused?",
+    "subHeader": "Here are some frequently asked questions",
+    "1": {
+      "title": "What is your company all about?",
+      "subtitle": "Company Overview",
+      "content": "Our company is dedicated to providing innovative solutions for various industries. We focus on creating cutting-edge technologies to improve efficiency and user experiences."
+    },
+    "2": {
+      "title": "How can I contact customer support?",
+      "subtitle": "Contacting Support",
+      "content": "You can reach our customer support team by email at support@yourcompany.com or by phone at +123-456-7890. We're here to assist you with any questions or issues you may have."
+    },
+    "3": {
+      "title": "Do you offer a money-back guarantee?",
+      "subtitle": "Money-Back Guarantee",
+      "content": "Yes, we offer a 30-day money-back guarantee on all our products. If you're not satisfied with your purchase, please contact our support team for a refund."
+    },
+    "4": {
+      "title": "Are there any special requirements to use your services?",
+      "subtitle": "System Requirements",
+      "content": "The specific requirements for using our services may vary depending on the product. However, most of our solutions are user-friendly and compatible with common hardware and software. Please check the product documentation for details."
+    },
+    "5": {
+      "title": "What payment methods do you accept?",
+      "subtitle": "Accepted Payment Methods",
+      "content": "We accept major credit cards, PayPal, and bank transfers for payments. You can choose the payment method that is most convenient for you during the checkout process."
+    },
+    "6": {
+      "title": "Is my personal information secure with you?",
+      "subtitle": "Data Security and Privacy",
+      "content": "Yes, we take data security and privacy seriously. We have robust measures in place to protect your personal information. You can learn more about our data security practices in our privacy policy."
+    },
+    "7": {
+      "title": "How can I get updates on your products and services?",
+      "subtitle": "Receiving Updates",
+      "content": "You can subscribe to our newsletter to receive updates on new products, features, and promotions. You can also follow us on social media for the latest news and announcements."
+    },
+    "8": {
+      "title": "Do you offer discounts for non-profit organizations?",
+      "subtitle": "Non-Profit Discounts",
+      "content": "Yes, we have special pricing and discounts for non-profit organizations. Contact our sales team to learn more about our non-profit programs."
+    }
+  },
+  "data": {
+    "1": {
+      "title": "Experience Unmatched",
+      "description": "Dive into an era where your voice commands transcend reality, offering unparalleled precision in speech recognition, amidst the ever-present noise of life's hustle.",
+      "speed": "0.8"
+    },
+    "2": {
+      "title": "Voice Automation",
+      "description": "Explore the globe with a voice assistant that understands the nuances of over 30 languages, adapting its comprehension to your unique vocal signature for an intimate digital experience.",
+      "speed": "0.82"
+    },
+    "3": {
+      "title": "& productivity",
+      "description": "Elevate to the next level with a voice assistant that transforms terminal commands into conversations, merging intuition with technology to revolutionize your digital dialogue.",
+      "speed": "0.88"
+    },
+    "5": {
+      "title": "Through Intelligent",
+      "description": "Navigate through your tasks with an intelligence that anticipates your needs, offering smart suggestions and executing a variety of functions based on your voice inputs.",
+      "speed": "0.92"
+    },
+    "6": {
+      "title": "Respecting Privacy",
+      "description": "Conclude your journey with the assurance of stringent privacy measures, where your voice activates not just commands but a shield that guards your personal data with utmost integrity.",
+      "speed": "1"
+    },
+    "7": {
+      "title": "& Task Matching",
+      "description": "Match your verbal commands with the assistant’s vast repertoire of tasks, ensuring that even the most complex requests find their resolution in the blink of an eye.",
+      "speed": "0.94"
+    }
   }
 }

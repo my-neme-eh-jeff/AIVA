@@ -5,10 +5,10 @@ import { useInView } from "react-intersection-observer";
 
 export function MaskText() {
   const phrases = [
-    "It is a long established fact",
-    "that a reader will be distracted",
-    "by the readable content of a page",
-    "when looking at its layout.",
+    "A multilingual, multi-modal",
+    "personal assistant",
+    "that fits in the palms of your hands",
+    "and is always at your service.",
   ];
   const animation = {
     initial: { y: "100%" },
