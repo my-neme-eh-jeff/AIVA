@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:path_provider/path_provider.dart';
-import '../constants.dart';
+import 'package:untitled1/helpers/Utils.dart';
+import '../../../constants.dart';
 import 'chatBubble.dart';
 import 'package:path/path.dart';
 import 'package:http_parser/http_parser.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+String apiKey = Constants().apiKey;
 
 class GeminiPage extends StatefulWidget {
   const GeminiPage({super.key});
@@ -22,11 +25,17 @@ class GeminiPage extends StatefulWidget {
 class _GeminiPageState extends State<GeminiPage> {
   final model = GenerativeModel(
       model: 'gemini-pro-vision',
-      apiKey: 'AIzaSyAlfizEQTTHDLx-xzYZZ9Sauu2mqIct2XQ');
+      apiKey: apiKey,);
+  final modelText = GenerativeModel(
+      model: 'gemini-pro', apiKey: apiKey);
+
   double deviceHeight = Constants().deviceHeight,
       deviceWidth = Constants().deviceWidth;
+  String promptGemini = Constants().prompt;
+
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
   List<String> lst = [];
   bool readOnly = false;
   File? image;
@@ -37,21 +46,11 @@ class _GeminiPageState extends State<GeminiPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
+    print(promptGemini);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-            title: const Text(
-              "Gemini",
-              style: TextStyle(color: Colors.cyan),
-            ),
-            backgroundColor: Colors.black,
-            leading: BackButton(
-              color: Colors.cyan,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            )),
         body: Form(
             key: _formKey,
             child: Column(
@@ -118,7 +117,6 @@ class _GeminiPageState extends State<GeminiPage> {
                                 ? Row(children: [
                                     InkWell(
                                       onTap: () async {
-                                        print("here");
                                         var path = await pickImage();
                                       },
                                       child: Icon(
@@ -132,6 +130,7 @@ class _GeminiPageState extends State<GeminiPage> {
                                     ),
                                     InkWell(
                                       onTap: () async {
+
                                         String text = _controller.text.trim();
 
                                         setState(() {
@@ -140,27 +139,64 @@ class _GeminiPageState extends State<GeminiPage> {
                                           readOnly = !readOnly;
                                         });
 
-                                        final prompt = TextPart(text);
+                                        late final response;
 
-                                        final imageBytes =
-                                            await image!.readAsBytes();
+                                        final prompt =
+                                            TextPart(promptGemini + text);
 
-                                        final imageParts = [
-                                          DataPart('image/jpeg', imageBytes),
-                                        ];
+                                        if (image != null) {
+                                          final imageBytes =
+                                              await image!.readAsBytes();
 
-                                        final response =
-                                            await model.generateContent([
-                                          Content.multi([prompt, ...imageParts])
-                                        ]);
-                                        if (kDebugMode) {
-                                          print(response.text);
+                                          final imageParts = [
+                                            DataPart('image/jpeg', imageBytes),
+                                          ];
+
+                                          response =
+                                              await model.generateContent([
+                                            Content.multi(
+                                                [prompt, ...imageParts])
+                                          ]);
+                                          if (kDebugMode) {
+                                            print(response.text);
+                                          }
+
+                                          setState(() {
+                                            lst.add(response.text!);
+                                            readOnly = !readOnly;
+                                          });
+                                        } else {
+                                          final content = [
+                                            Content.text(promptGemini + text)
+                                          ];
+
+                                          response = await modelText
+                                              .generateContent(content);
                                         }
 
-                                        setState(() {
-                                          lst.add(response.text!);
-                                          readOnly = !readOnly;
-                                        });
+                                        print(response.text);
+
+                                        try {
+                                          if (response.text == '0') {
+                                            setState(() {
+                                              lst.add(
+                                                  "Okay, performing this task!");
+                                              readOnly = !readOnly;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              lst.add(response.text!);
+                                              readOnly = !readOnly;
+                                            });
+                                          }
+                                        } catch (e) {
+                                          Utils.showSnackBar(e.toString());
+                                          setState(() {
+                                            lst.add(
+                                                "Sorry, can't answer that!");
+                                            readOnly = !readOnly;
+                                          });
+                                        }
                                       },
                                       child: Icon(
                                         Icons.send_rounded,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:untitled1/constants.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:untitled1/screens/BuildProfile/buildProfile.dart';
 import 'package:untitled1/screens/UserPage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -233,7 +234,12 @@ class _Login extends State<Login> {
                                           _passwordController.text.trim());
 
                                       if (lst[1] == 200) {
-                                        print(_supportState);
+
+                                        if (kDebugMode) {
+                                          print(
+                                              "Fingerprint authenticated: $_supportState");
+                                        }
+
                                         if (_supportState) {
                                           bool? finger =
                                               await _fingerprintAuthenticate();
@@ -248,12 +254,25 @@ class _Login extends State<Login> {
                                                 'token', lst[0]);
 
                                             Navigator.of(context).pop();
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        UserPage(
-                                                          token: lst[0],
-                                                        )));
+
+                                            print(lst);
+
+                                            if (lst[2]) {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          UserPage(
+                                                            token: lst[0],
+                                                          )));
+                                            } else {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          BuildProfile(
+                                                            token: lst[0],
+                                                          )));
+                                            }
+
                                             Utils.showSnackBar1(
                                                 "Login successful!");
                                           } else {
@@ -349,10 +368,17 @@ class _Login extends State<Login> {
       print(res.statusCode);
     }
 
+    print(res.body);
+
     var responseBody = res.body;
     Map<String, dynamic> data = jsonDecode(responseBody);
     var loginData = LogInModel.fromJson(data);
-    var list = [loginData.token, res.statusCode];
+    var list = [
+      loginData.data?.token,
+      res.statusCode,
+      loginData.data?.isVerified
+    ];
+
     return list;
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:untitled1/models/Whisper.dart';
 import '../../constants.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -80,7 +81,6 @@ class _AudioInputState extends State<AudioInput>
   @override
   void initState() {
     super.initState();
-    // initTTS();
 
     _controller = AnimationController(
         vsync: this, duration: Duration(seconds: maxDuration))
@@ -312,8 +312,8 @@ class _AudioInputState extends State<AudioInput>
     );
   }
 
-  Future<List<Object?>> sendAudio(File? audioPath) async {
-    List<Object?> lst = [];
+  Future<List<dynamic?>> sendAudio(File? audioPath) async {
+    List<dynamic?> lst = [];
     var response = http.MultipartRequest(
       'POST',
       Uri.parse('$ngrokurl/transcribe'),
@@ -328,6 +328,11 @@ class _AudioInputState extends State<AudioInput>
       print(responseBody);
       print(res.statusCode);
     }
+
+    var data = jsonDecode(responseBody);
+    var bodyData = WhisperModel.fromJson(data);
+    lst = [bodyData.message, bodyData.srcLang];
+
     return lst;
   }
 

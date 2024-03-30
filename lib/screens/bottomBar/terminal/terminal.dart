@@ -64,11 +64,17 @@ class _TerminalScreenState extends State<TerminalScreen> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SafeArea(
-          child: TerminalView(
-            terminal,
-            controller: terminalController,
-            autofocus: true,
-            backgroundOpacity: 0.7,
+          child: Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.cyan)),
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: TerminalView(
+                terminal,
+                controller: terminalController,
+                autofocus: true,
+                backgroundOpacity: 0.7,
+              ),
+            ),
           ),
         ),
       ),

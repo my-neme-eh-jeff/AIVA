@@ -1,6 +1,6 @@
-import 'package:untitled1/chatGemini/gemini.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:untitled1/screens/bottomBar/chatGemini/gemini.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

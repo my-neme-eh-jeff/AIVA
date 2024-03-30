@@ -8,6 +8,7 @@ import 'package:untitled1/screens/Profile.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../constants.dart';
+import 'bottomBar/chatGemini/gemini.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, required this.token});
@@ -19,7 +20,8 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   int currentIndex = 1;
-  final screens = const [Placeholder(), AudioInput(), TerminalScreen()];
+  final screens = const [GeminiPage(), AudioInput(), TerminalScreen()];
+  final List<String> titleList = const ['Text/image', 'Voice', 'Terminal'];
   bool? isLoggedIn = false;
 
   double deviceHeight = Constants().deviceHeight,
@@ -28,11 +30,6 @@ class _UserPageState extends State<UserPage> {
   @override
   void initState() {
     super.initState();
-    getLoginDetails();
-  }
-
-  getLoginDetails() async {
-    bool? isLoggedIn = await getLoginFlagValuesSF() ?? false;
   }
 
   @override
@@ -44,9 +41,17 @@ class _UserPageState extends State<UserPage> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          title: Text(
+            titleList[currentIndex],
+            style: TextStyle(
+                color: Colors.cyan[500],
+                fontSize: 25.0,
+                fontWeight: FontWeight.w700,
+                fontFamily: "productSansReg"),
+          ),
           iconTheme: const IconThemeData(color: Colors.white),
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black,
           actions: [
             IconButton(
               padding: EdgeInsets.zero,
@@ -56,8 +61,8 @@ class _UserPageState extends State<UserPage> {
               },
               icon: Image.asset(
                 'assets/images/new_profile.png',
-                height: height * (42 / deviceHeight),
-                width: width * (42 / deviceWidth),
+                height: height * (82 / deviceHeight),
+                width: width * (82 / deviceWidth),
               ),
             ),
           ],

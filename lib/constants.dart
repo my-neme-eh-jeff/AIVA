@@ -1,8 +1,38 @@
 class Constants {
   double deviceWidth = 888.0;
   double deviceHeight = 406.6666666666667;
-  String ngrokurl = 'https://b27b-35-199-13-144.ngrok-free.app';
+
+  String apiKey = 'AIzaSyBLfuL7Vztx2v3HCc73oYRa1oU5KEJyLcU';
+
+  String ngrokurl = 'https://61ab-34-16-182-88.ngrok-free.app';
   String base_url = 'http://13.200.249.129:8080';
+
+  String prompt = """
+      [CONTEXT]
+      You are an AI classification model that needs to classify if the user query pertains to Information Retreival or not.
+      
+      [INSTRUCTIONS]
+      You will be provided a user query, and you must indicate whether the query requires the extraction of information such as facts, summaries, news articles, etc.
+      The query shall also be considered Information Retrieval if it asks to perform basic or complex calculations.
+      
+      [EXAMPLES]
+      1. User query: "How's the weather today?"
+         Type: Information Retrieval
+      
+      2. User query: "Set a reminder for tomorrow's meeting at 10 AM."
+         Type: None
+      
+      3. User query: "What's your favorite movie?"
+         Type: Information Retrieval
+      
+      4. User query: "Find the nearest coffee shop."
+         Type: None
+      
+      5. User query: "What is 30% of 50?"
+          Type: Information Retrieval
+      
+      The query is: """;
+
   List<String> TTSLocaleIDS = [
     'hr-HR',
     'ko-KR',
