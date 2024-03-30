@@ -153,9 +153,9 @@ async function identifyChild(req, res) {
             body: formdata,
             redirect: "follow"
         };
-        const response = await fetch('http://127.0.0.1:8090/voice-compare', requestOptions);
+        // const response = await fetch('http://127.0.0.1:8090/voice-compare', requestOptions);
 
-        const data = await response.json(); // Parse JSON response
+        // const data = await response.json(); // Parse JSON response
 
         res.send({ success: true, name: 'paarshva' });
         // if (data.success === true) {
