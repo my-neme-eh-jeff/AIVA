@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment/moment');
 const sendemail = require('../middlewares/emailer');
 const { base64Decode, base64Encode, sha256, hashPw, verifyPw } = require('../middlewares/encDecScript');
-
+const path = require('path');
 const { UserModel, ChildModel, ResetPwEmailModel, validateResetInfo, validateUserInfo } = require("../models/userModel");
 
 async function signUpController(req, res) {
@@ -101,7 +101,7 @@ async function createChildModel(req, res) {
     try {
         var name = req.body.name;
         var audioFile = req.file.path;
-        var completePath = __dirname +"\\"+audioFile;
+        var completePath = path.join(__dirname, audioFile);
         const token = req.body.token;
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
         const userId = decodedToken.user._id;
@@ -121,8 +121,43 @@ async function createChildModel(req, res) {
     }
 }
 
-async function getChildren(req,res){
-    try{
+async function identifyChild(req, res) {
+    try {
+        var token = req.body.token;
+        const audioFile = req.file['path'];
+        var completePath = path.join(__dirname, audioFile);
+        const decodedToken = jwt.verify(token, process.env.JSON_KEY);
+        const userId = decodedToken.user._id;
+        // console.log(userId)
+        const formdata = new FormData();
+        formdata.append("parent_token", userId);
+        formdata.append("audioFile", completePath);
+        const requestOptions = {
+            method: "POST",
+            body: formdata,
+            redirect: "follow"
+        };
+        const response = await fetch('http://13.200.249.129:8090/voice-compare', requestOptions);
+
+        const data = await response.json(); // Parse JSON response
+
+        if (data.success === true) {
+            res.send({ success: true, name: data.recognized_speaker });
+        } else {
+            res.send({ success: false, message: "Could not Identify" });
+        }
+    }
+    catch (err) {
+        res.json({
+            success: false,
+            data: { error: "Child Identification Error: " + err }
+        });
+    }
+}
+
+
+async function getChildren(req, res) {
+    try {
         var token = req.params.token;
         const decodedToken = jwt.verify(token, process.env.JSON_KEY);
         const userId = decodedToken.user._id;
@@ -132,10 +167,10 @@ async function getChildren(req,res){
             data: { children }
         });
     }
-    catch(err){
+    catch (err) {
         res.json({
-            success:false,
-            data:{error:"Child Getting Error " + err}
+            success: false,
+            data: { error: "Child Getting Error " + err }
         })
     }
 }
@@ -326,4 +361,4 @@ async function emailLinkVerifier(req, res) {
 }
 
 
-module.exports = { signUpController, loginController, createChildModel, getChildren, pwResetEmailController, pwLinkVerifier, pwResetController, emailVerificationController, emailLinkVerifier }
+module.exports = { signUpController, loginController, createChildModel, getChildren, identifyChild, pwResetEmailController, pwLinkVerifier, pwResetController, emailVerificationController, emailLinkVerifier }
