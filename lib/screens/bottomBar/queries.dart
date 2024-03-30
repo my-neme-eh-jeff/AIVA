@@ -26,6 +26,7 @@ class AudioInput extends StatefulWidget {
 
 class _AudioInputState extends State<AudioInput>
     with SingleTickerProviderStateMixin {
+  String lastWords = '';
   int maxDuration = 10;
 
   double deviceHeight = Constants().deviceHeight,
@@ -134,59 +135,6 @@ class _AudioInputState extends State<AudioInput>
                 SizedBox(
                   height: 20 * (height / deviceHeight),
                 ),
-                SizedBox(
-                  width: 400 * (width / deviceWidth),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: DropdownButtonFormField(
-                      itemHeight: null,
-                      isExpanded: true,
-                      hint: Text(
-                        _secondLanguage,
-                        style: const TextStyle(
-                          fontFamily: "productSansReg",
-                          overflow: TextOverflow.ellipsis,
-                          color: Colors.black,
-                        ),
-                        maxLines: 1,
-                      ),
-                      onChanged: (v) => setState(() {
-                        _secondLanguage = Constants()
-                            .TTSDisplay[Constants().TTSLocaleIDS.indexOf(v!)];
-                        TTSLocaleID = v;
-                      }),
-                      items: Constants().TTSLocaleIDS.map((e) {
-                        return DropdownMenuItem(
-                          value: e,
-                          child: SizedBox(
-                            width: width * (75 / 340),
-                            child: Text(
-                              Constants().TTSDisplay[
-                                  Constants().TTSLocaleIDS.indexOf(e)],
-                              style: const TextStyle(
-                                  overflow: TextOverflow.ellipsis,
-                                  fontFamily: "productSansReg",
-                                  color: Colors.black,
-                                  fontSize: 15),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      style: const TextStyle(
-                          fontFamily: "productSansReg",
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15),
-                      decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(13),
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7.0),
-                              borderSide: BorderSide.none)),
-                    ),
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -235,15 +183,25 @@ class _AudioInputState extends State<AudioInput>
                   SizedBox(
                     height: 60 * (height / deviceHeight),
                     child: gotSomeTextYo
-                        ? const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              "random",
-                              style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: "productSansReg",
-                                  color: Color(0xFF009CFF)),
+                        ? Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  width: 1.5, color: const Color(0xFF009CFF)),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SingleChildScrollView(
+                                child: Text(
+                                  lastWords,
+                                  style: const TextStyle(
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: "productSansReg",
+                                      color: Color(0xFF009CFF)),
+                                ),
+                              ),
                             ),
                           )
                         : const Padding(
@@ -260,7 +218,7 @@ class _AudioInputState extends State<AudioInput>
                   ),
                 Container(
                   alignment: Alignment.center,
-                  height: 40 * (height / deviceHeight),
+                  height: 50 * (height / deviceHeight),
                   decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.black,
@@ -273,10 +231,15 @@ class _AudioInputState extends State<AudioInput>
                         isPlaying = false;
                         await stop();
                         _controller.reset();
-                        Translation x = await translator.translate("hello",
-                            from: 'en', to: TTSLocaleID.substring(0, 2));
                         if (kDebugMode) {
-                          print("After translation:${x.text}");
+                          print("Before translation:${lst[0]}");
+                        }
+                        Translation x = await translator.translate(lst[0],
+                            from: 'en', to: 'hi');
+                        lastWords = x.text;
+                        gotSomeTextYo = true;
+                        if (kDebugMode) {
+                          print("After translation:$lastWords");
                         }
                       } else {
                         isPlaying = true;
@@ -316,7 +279,7 @@ class _AudioInputState extends State<AudioInput>
     List<dynamic?> lst = [];
     var response = http.MultipartRequest(
       'POST',
-      Uri.parse('$ngrokurl/transcribe'),
+      Uri.parse('$ngrokurl/transcription'),
     );
     response.files.add(http.MultipartFile(
         'audio', audioPath!.readAsBytes().asStream(), audioPath.lengthSync(),

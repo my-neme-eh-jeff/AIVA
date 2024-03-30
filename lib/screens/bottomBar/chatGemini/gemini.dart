@@ -24,10 +24,10 @@ class GeminiPage extends StatefulWidget {
 
 class _GeminiPageState extends State<GeminiPage> {
   final model = GenerativeModel(
-      model: 'gemini-pro-vision',
-      apiKey: apiKey,);
-  final modelText = GenerativeModel(
-      model: 'gemini-pro', apiKey: apiKey);
+    model: 'gemini-pro-vision',
+    apiKey: apiKey,
+  );
+  final modelText = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
 
   double deviceHeight = Constants().deviceHeight,
       deviceWidth = Constants().deviceWidth;
@@ -35,6 +35,8 @@ class _GeminiPageState extends State<GeminiPage> {
 
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  String suggestions = '';
 
   List<String> lst = [];
   bool readOnly = false;
@@ -100,120 +102,125 @@ class _GeminiPageState extends State<GeminiPage> {
                       readOnly: readOnly,
                       controller: _controller,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          filled: true,
-                          hintText: "Enter text and/or image",
-                          hintStyle: TextStyle(
-                            fontSize: 17.5,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.cyan[500],
-                          ),
-                          suffix: SizedBox(
-                            width: width * (200 / deviceWidth),
-                            height: height * (10 / deviceHeight),
-                            child: !readOnly
-                                ? Row(children: [
-                                    InkWell(
-                                      onTap: () async {
-                                        var path = await pickImage();
-                                      },
-                                      child: Icon(
-                                        Icons.image,
-                                        size: 25,
-                                        color: Colors.cyan[500],
-                                      ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        filled: true,
+                        hintText: "Enter text and/or image",
+                        hintStyle: TextStyle(
+                          fontSize: 17.5,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.cyan[500],
+                        ),
+                        suffix: SizedBox(
+                          width: width * (200 / deviceWidth),
+                          height: height * (10 / deviceHeight),
+                          child: !readOnly
+                              ? Row(children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      var path = await pickImage();
+                                    },
+                                    child: Icon(
+                                      Icons.image,
+                                      size: 25,
+                                      color: Colors.cyan[500],
                                     ),
-                                    SizedBox(
-                                      width: width * (50 / deviceWidth),
-                                    ),
-                                    InkWell(
-                                      onTap: () async {
+                                  ),
+                                  SizedBox(
+                                    width: width * (50 / deviceWidth),
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      String text = _controller.text.trim();
 
-                                        String text = _controller.text.trim();
+                                      setState(() {
+                                        lst.add(text);
+                                        _controller.clear();
+                                        readOnly = !readOnly;
+                                      });
+
+                                      late final response;
+
+                                      final prompt =
+                                          TextPart(promptGemini + text);
+
+                                      if (image != null) {
+                                        final imageBytes =
+                                            await image!.readAsBytes();
+
+                                        final imageParts = [
+                                          DataPart('image/jpeg', imageBytes),
+                                        ];
+
+                                        response = await model.generateContent([
+                                          Content.multi([prompt, ...imageParts])
+                                        ]);
+                                        if (kDebugMode) {
+                                          print(response.text);
+                                        }
 
                                         setState(() {
-                                          lst.add(text);
-                                          _controller.clear();
+                                          lst.add(response.text!);
                                           readOnly = !readOnly;
                                         });
+                                      } else {
+                                        final content = [
+                                          Content.text(promptGemini + text)
+                                        ];
 
-                                        late final response;
+                                        response = await modelText
+                                            .generateContent(content);
+                                      }
 
-                                        final prompt =
-                                            TextPart(promptGemini + text);
+                                      print(response.text);
 
-                                        if (image != null) {
-                                          final imageBytes =
-                                              await image!.readAsBytes();
-
-                                          final imageParts = [
-                                            DataPart('image/jpeg', imageBytes),
-                                          ];
-
-                                          response =
-                                              await model.generateContent([
-                                            Content.multi(
-                                                [prompt, ...imageParts])
-                                          ]);
-                                          if (kDebugMode) {
-                                            print(response.text);
-                                          }
-
+                                      try {
+                                        if (response.text == '0') {
+                                          setState(() {
+                                            lst.add(
+                                                "Okay, performing this task!");
+                                            readOnly = !readOnly;
+                                          });
+                                        } else {
                                           setState(() {
                                             lst.add(response.text!);
                                             readOnly = !readOnly;
                                           });
-                                        } else {
-                                          final content = [
-                                            Content.text(promptGemini + text)
-                                          ];
-
-                                          response = await modelText
-                                              .generateContent(content);
                                         }
-
-                                        print(response.text);
-
-                                        try {
-                                          if (response.text == '0') {
-                                            setState(() {
-                                              lst.add(
-                                                  "Okay, performing this task!");
-                                              readOnly = !readOnly;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              lst.add(response.text!);
-                                              readOnly = !readOnly;
-                                            });
-                                          }
-                                        } catch (e) {
-                                          Utils.showSnackBar(e.toString());
-                                          setState(() {
-                                            lst.add(
-                                                "Sorry, can't answer that!");
-                                            readOnly = !readOnly;
-                                          });
-                                        }
-                                      },
-                                      child: Icon(
-                                        Icons.send_rounded,
-                                        size: 25,
-                                        color: Colors.cyan[500],
-                                      ),
+                                      } catch (e) {
+                                        Utils.showSnackBar(e.toString());
+                                        setState(() {
+                                          lst.add("Sorry, can't answer that!");
+                                          readOnly = !readOnly;
+                                        });
+                                      }
+                                    },
+                                    child: Icon(
+                                      Icons.send_rounded,
+                                      size: 25,
+                                      color: Colors.cyan[500],
                                     ),
-                                  ])
-                                : const Padding(
-                                    padding: EdgeInsets.all(4.0),
-                                    child: SpinKitDoubleBounce(
-                                      color: Colors.cyan,
-                                    )),
-                          ),
-                          fillColor: Colors.white),
+                                  ),
+                                ])
+                              : const Padding(
+                                  padding: EdgeInsets.all(4.0),
+                                  child: SpinKitDoubleBounce(
+                                    color: Colors.cyan,
+                                  )),
+                        ),
+                        fillColor: Colors.white,
+                      ),
+                      onChanged: (text) async {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Container();
+                            });
+                      },
                     )),
                   ),
+                  Text("Suggestions: ")
                 ])),
       ),
     );
