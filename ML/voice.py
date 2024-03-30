@@ -9,6 +9,7 @@ import random
 from pydub import AudioSegment
 
 app = Flask(__name__)
+AudioSegment.converter = r"/home/ubuntu/Codeshastra_TechTitans/ML/ffmpeg.exe"
 # Connect to MongoDB
 # Connect to MongoDB
 client = pymongo.MongoClient(
