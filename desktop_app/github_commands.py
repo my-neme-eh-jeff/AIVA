@@ -55,8 +55,8 @@ class GitHubClient:
 
 # Example usage
 if __name__ == "__main__":
-    github_username = "innomershyper@gmail.com"
-    github_password = "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"
+    github_username = ""
+    github_password = ""
     repository_name = input("Enter the name of the repository: ")
     repository_name = "Innomer/" + repository_name
     branch_name = input("Enter the name of the branch: ")
