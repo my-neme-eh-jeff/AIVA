@@ -7,9 +7,7 @@ import Menu from './menu';
 import { AnimatePresence } from 'framer-motion';
 
 export default function Index() {
-
     const [menuIsOpen, setMenuIsOpen] = useState(false);
-
     return (
         <div className={styles.header}>
             <Burger openMenu={() => { setMenuIsOpen(true) }} />
