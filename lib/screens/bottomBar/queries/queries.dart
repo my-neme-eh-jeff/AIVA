@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/helpers/Utils.dart';
-import 'package:untitled1/models/Whisper.dart';
 import 'package:untitled1/models/identifyUserModel.dart';
 import 'package:untitled1/screens/bottomBar/queries/contacts.dart';
+import 'package:untitled1/screens/bottomBar/queries/web_search.dart';
 import '../../../constants.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -53,6 +55,9 @@ class _AudioInputState extends State<AudioInput>
   final translator = GoogleTranslator();
 
   String base_url = Constants().base_url;
+
+  late final LocalAuthentication auth;
+  bool _supportState = false;
 
   Future record() async {
     if (!isRecorderReady) return;
@@ -102,6 +107,13 @@ class _AudioInputState extends State<AudioInput>
   @override
   void initState() {
     super.initState();
+    auth = LocalAuthentication();
+    auth.isDeviceSupported().then((bool isSupported) {
+      print("hi$isSupported");
+      setState(() {
+        _supportState = isSupported;
+      });
+    });
 
     _controller = AnimationController(
         vsync: this, duration: Duration(seconds: maxDuration))
@@ -279,9 +291,17 @@ class _AudioInputState extends State<AudioInput>
                         } else {
                           if (lst[0] == 'call') {
                             lastWords = lst[2];
+                            await _fingerprintAuthenticate();
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => const Contacts()));
                             _callNumber();
+                          }
+                          if (lst[0] == 'web_search') {
+                            lastWords = lst[2];
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => WebSearch(
+                                      query: lst[2],
+                                    )));
                           }
                         }
                       } else {
@@ -373,6 +393,23 @@ class _AudioInputState extends State<AudioInput>
     }
 
     return lst;
+  }
+
+  Future<bool?> _fingerprintAuthenticate() async {
+    try {
+      bool authenticated = await auth.authenticate(
+          localizedReason:
+              "To secure your app companion in ways more than one.",
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: true,
+          ));
+      debugPrint("Authenticated: $authenticated");
+      return authenticated;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
   }
 
   Future<File> saveAudioPermanently(String path) async {

@@ -52,6 +52,8 @@ dependencies:
   loading_animation_widget:
   translator:
   fast_contacts:
+  youtube_player_flutter:
+  carousel_slider:
 
 
   # The following adds the Cupertino Icons font to your application.
