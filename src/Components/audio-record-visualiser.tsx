@@ -22,6 +22,10 @@ type Props = {
   audioFileResponse: string[];
   setMessageResponse: React.Dispatch<React.SetStateAction<string[]>>;
   setAudioFileResponse: React.Dispatch<React.SetStateAction<string[]>>;
+  youtubeResponse: string[];
+  setYoutubeResponse: React.Dispatch<React.SetStateAction<string[]>>;
+  setTrigger: React.Dispatch<React.SetStateAction<number>>;
+  trigger: number;
 };
 type Record = {
   id: number;
@@ -50,8 +54,13 @@ export const AudioRecorderWithVisualizer = ({
   audioFileResponse,
   setMessageResponse,
   setAudioFileResponse,
+  youtubeResponse,
+  setYoutubeResponse,
+  setTrigger,
+  trigger,
 }: Props) => {
   const { theme } = useTheme();
+  const [tempAudio, setTempAudio] = useState();
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isRecordingFinished, setIsRecordingFinished] =
     useState<boolean>(false);
@@ -73,6 +82,7 @@ export const AudioRecorderWithVisualizer = ({
     () => padWithLeadingZeros(hours, 2).split(""),
     [hours],
   );
+  const [tempData, setTempData] = useState<string | null>(null);
   const [minuteLeft, minuteRight] = useMemo(
     () => padWithLeadingZeros(minutes, 2).split(""),
     [minutes],
@@ -94,7 +104,25 @@ export const AudioRecorderWithVisualizer = ({
   });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<any>(null);
-
+  useEffect(() => {
+    async function webSearch() {
+      console.log("asdasd");
+      console.log(tempData);
+      if (tempData) {
+        console.log("INSIDE THE WEB SEARCH FUNCTION");
+        console.log(tempData);
+        const { data: dataa } = await axios.post(
+          siteConfig.flaskBackendBaseUrl + "/web-search",
+          {
+            query: tempData,
+          },
+        );
+        console.log(dataa);
+        setYoutubeResponse((prev) => [...prev, dataa]);
+      }
+    }
+    webSearch();
+  }, [trigger]);
   function startRecording() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
@@ -205,6 +233,7 @@ export const AudioRecorderWithVisualizer = ({
       }
     }
   }
+
   const submitRecording = async (blob: Blob) => {
     const loadingToast = toast.loading("Loading");
     let loadingToast2;
@@ -221,6 +250,61 @@ export const AudioRecorderWithVisualizer = ({
           },
         },
       );
+      console.log(data);
+      if (data.predicted === "email") {
+        let loadingToastForEmail;
+        try {
+          loadingToastForEmail = toast.loading("Sending email");
+          const { data: dataa } = await axios.post(
+            siteConfig.flaskBackendBaseUrl + "/email/",
+            {
+              query: data.src,
+            },
+          );
+          console.log(dataa);
+          const mailto = encodeURIComponent(dataa.mailto || "");
+          const subject = encodeURIComponent(dataa.subject || "");
+          const cc =
+            dataa.cc?.length > 0 ? encodeURIComponent(dataa.cc[0]) : "";
+          const mailtoLink = document.getElementById("mailtoLink");
+          const mailtoHref = `mailto:${mailto}?subject=${subject}&cc=${dataa.cc?.length > 0 ? dataa.cc[0] : ""}`; // Use your dynamically generated link here
+          mailtoLink.href = mailtoHref;
+          mailtoLink.click();
+
+          const url = `mailto:${mailto}?subject=${subject}`;
+          console.log(url);
+          window.open(url);
+          window?.focus();
+          return;
+        } catch (err) {
+          toast.error("There was an error in seding the email");
+          console.log(err);
+        } finally {
+          toast.dismiss(loadingToastForEmail);
+          return;
+        }
+      }
+      setTempAudio(clientAudio);
+      setTempData((prev) => data.src);
+      // if (data.predicted === "web_search") {
+      //   let loadingToastForEmail;
+      //   try {
+      //     loadingToastForEmail = toast.loading("Scraping the web");
+      //     // const { data: dataa } = await axios.post(
+      //     //   siteConfig.flaskBackendBaseUrl + "/web-search",
+      //     //   {
+      //     //     query: data.src,
+      //     //   },
+      //     // );
+      //     // console.log(dataa);
+      //     // setYoutubeResponse((prev) => [...prev, dataa.youtube[0]]);
+      //   } catch (err) {
+      //     toast.error("Oops! There was an error in web lookup!");
+      //     console.log(err);
+      //   } finally {
+      //     toast.dismiss(loadingToastForEmail);
+      //   }
+      // }
       toast.success(`Language detected "${data.src_lang}"`);
       setMessageResponse((prev) => [...prev, data.src, data.message]);
       toast.dismiss(loadingToast);
@@ -418,6 +502,9 @@ export const AudioRecorderWithVisualizer = ({
         className,
       )}
     >
+      <a href="#" id="mailtoLink" style={{ display: "none" }}>
+        Send Email
+      </a>
       <Timer
         isPaused={isPaused}
         pause={pause}

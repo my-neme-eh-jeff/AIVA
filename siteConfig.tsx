@@ -15,5 +15,5 @@ export const siteConfig = {
   footerDescription1: "andushandhuandushandhuandushandhu",
   footerDescription2: "andushandhuandushandhuandushandhu",
   nodeBackendBaseUrl: "",
-  flaskBackendBaseUrl: "https://301d-34-41-234-141.ngrok-free.app",
+  flaskBackendBaseUrl: "https://f0f8-2409-40c0-1048-fe65-597d-2429-50c1-3560.ngrok-free.app",
 };

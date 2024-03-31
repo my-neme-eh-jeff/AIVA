@@ -15,7 +15,7 @@ export const titleVariants = tv({
     },
     size: {
       sm: "text-3xl md:text-4xl lg:text-5xl leading-7 xl:text-5xl 2xl::text-7xl",
-      md: "text-4xl md:text-5xl lg:text-7xl leading-8 xl:text-7xl 2xl::text-9xl",
+      md: "text-4xl md:text-5xl lg:text-7xl leading-8 xl:text-8xl 2xl::text-9xl",
     },
     fullWidth: {
       true: "w-full block",
