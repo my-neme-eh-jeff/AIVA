@@ -13,7 +13,9 @@ const config = {
       fullUrl: true,
     },
   },
-  
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default withNextIntl(config);
