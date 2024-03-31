@@ -10,13 +10,13 @@ import threading
 import speech_recognition as sr
 import pathlib
 import textwrap
-import google.generativeai as genai
+# import google.generativeai as genai
 from github_commands import GitHubClient
 
 
 pygame.init()
-genai.configure(api_key="AIzaSyBWkIHhqUxDieqoBx72YZoZriKeyKZp7VY")
-model = genai.GenerativeModel('gemini-pro')
+# genai.configure(api_key="AIzaSyBWkIHhqUxDieqoBx72YZoZriKeyKZp7VY")
+# model = genai.GenerativeModel('gemini-pro')
 gcC= GitHubClient("innomershyper@gmail.com", "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")
 
 width, height = 800, 600
@@ -177,85 +177,85 @@ def record_audio(stop_event):
     print(f"Audio saved as {filename}")
 
     # Perform speech recognition
-    recognizer = sr.Recognizer()
-    with sr.AudioFile(filename) as source:
-        audio_data = recognizer.record(source)
-        try:
-            text2 = recognizer.recognize_google(audio_data)
-            print("Speech Recognition Result:", text2)
-            text=model.generate_content(f"Can you extract the task and action and entities involved in the following command? \n {text2}").text
-            task, action, entities = extract_task_action_entities(text)
-            print(f"Task: {task}")
-            print(f"Action: {action}")
-            print("Entities:")
-            for key, value in entities.items():
-                print(f"{key}: {value}")
-            if action == "Upload":
-                if entities:
-                    print(entities)
-                    for i in entities.values():
-                        file_paths = search_file(entities[i])
-                        if file_paths:
-                            print(f"File found at: {file_paths[0]}")
-                        else:
-                            print(f"File not found: {entities[i]}")
-                        repo=gcC.get_repository("Innomer/Portfolio-Website")
-                        gcC.commit_changes(repo, "main", file_paths, "Added a new recording")
-                        text="File Uploaded"
-                print("DONE")
-            if action == "Download":
-                repo=gcC.get_repository("Innomer/Portfolio-Website")
-                gcC.pull_changes(repo, "main")
+#     recognizer = sr.Recognizer()
+#     with sr.AudioFile(filename) as source:
+#         audio_data = recognizer.record(source)
+#         try:
+#             text2 = recognizer.recognize_google(audio_data)
+#             print("Speech Recognition Result:", text2)
+#             action=model.generate_content(f"Can you extract the action involved in the following command? \n {text2}").text
+#             entities=model.generate_content(f"Can you extract the entities involved in the following command? \n {text2}").text
+            
+#             # task, action, entities = extract_task_action_entities(text)
+#             print(f"Task: {task}")
+#             print(f"Action: {action}")
+#             print("Entities:")
+#             for key, value in entities.items():
+#                 print(f"{key}: {value}")
+#             if action == "Upload":
+#                     for i in entities.values():
+#                         file_paths = search_file(entities[i])
+#                         if file_paths:
+#                             print(f"File found at: {file_paths[0]}")
+#                         else:
+#                             print(f"File not found: {entities[i]}")
+#                         repo=gcC.get_repository("Innomer/Portfolio-Website")
+#                         gcC.commit_changes(repo, "main", file_paths, "Added a new recording")
+#                         text="File Uploaded"
+#                     print("DONE")
+#             if action == "Download":
+#                 repo=gcC.get_repository("Innomer/Portfolio-Website")
+#                 gcC.pull_changes(repo, "main")
 
-            if action == "Commit":
-                repo=gcC.get_repository("Innomer/Portfolio-Website")
-                gcC.get_commits(repo, "main")
-            if action == "Repository":
-                repo=gcC.get_repository()
-        except sr.UnknownValueError:
-            print("Speech Recognition could not understand audio")
-        except sr.RequestError as e:
-            print("Could not request results from Google Speech Recognition service; {0}".format(e))
+#             if action == "Commit":
+#                 repo=gcC.get_repository("Innomer/Portfolio-Website")
+#                 gcC.get_commits(repo, "main")
+#             if action == "Repository":
+#                 repo=gcC.get_repository()
+#         except sr.UnknownValueError:
+#             print("Speech Recognition could not understand audio")
+#         except sr.RequestError as e:
+#             print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-import re
+# import re
 
-def extract_task_action_entities(input_string):
-    # Define regular expressions for Task, Action, and Entities
-    task_pattern = r"\*\*Task\*\*: (.+)"
-    action_pattern = r"\*\*Action\*\*: (.+)"
-    entity_pattern = r"\*\*Entities\*\*:(.+)"
+# def extract_task_action_entities(input_string):
+#     # Define regular expressions for Task, Action, and Entities
+#     task_pattern = r"\*\*Task\*\*: (.+)"
+#     action_pattern = r"\*\*Action\*\*: (.+)"
+#     entity_pattern = r"\*\*Entities\*\*:(.+)"
 
-    # Search for matches using regex
-    task_match = re.search(task_pattern, input_string)
-    action_match = re.search(action_pattern, input_string)
-    entity_match = re.search(entity_pattern, input_string)
+#     # Search for matches using regex
+#     task_match = re.search(task_pattern, input_string)
+#     action_match = re.search(action_pattern, input_string)
+#     entity_match = re.search(entity_pattern, input_string)
 
-    # Extract Task, Action, and Entities from matches
-    task = task_match.group(1).strip() if task_match else None
-    action = action_match.group(1).strip() if action_match else None
-    entities = {}
+#     # Extract Task, Action, and Entities from matches
+#     task = task_match.group(1).strip() if task_match else None
+#     action = action_match.group(1).strip() if action_match else None
+#     entities = {}
 
-    if entity_match:
-        entity_text = entity_match.group(1)
-        # Extract entities using regex
-        entity_pairs = re.findall(r"- (\w+):\s*([\w.]+)", entity_text)
-        entities = {key: value for key, value in entity_pairs}
+#     if entity_match:
+#         entity_text = entity_match.group(1)
+#         # Extract entities using regex
+#         entity_pairs = re.findall(r"- (\w+):\s*([\w.]+)", entity_text)
+#         entities = {key: value for key, value in entity_pairs}
 
-    return task, action, entities
+#     return task, action, entities
 
-def search_file(file_name):
-    # Initialize a list to store the absolute paths of the file
-    file_paths = []
+# def search_file(file_name):
+#     # Initialize a list to store the absolute paths of the file
+#     file_paths = []
 
-    # Walk through the file system starting from the root directory
-    for root_dir, _, files in os.walk('/'):
-        # Check if the file exists in the current directory
-        if file_name in files:
-            # If the file exists, get its absolute path and add it to the list
-            file_path = os.path.join(root_dir, file_name)
-            file_paths.append(file_path)
+#     # Walk through the file system starting from the root directory
+#     for root_dir, _, files in os.walk('/'):
+#         # Check if the file exists in the current directory
+#         if file_name in files:
+#             # If the file exists, get its absolute path and add it to the list
+#             file_path = os.path.join(root_dir, file_name)
+#             file_paths.append(file_path)
 
-    return file_paths
+#     return file_paths
 test_microphone()
 
 
