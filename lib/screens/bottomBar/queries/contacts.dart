@@ -20,7 +20,7 @@ class Contacts extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Contacts"),
           centerTitle: true,
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.cyan,
           elevation: 0.0,
         ),
         body: SizedBox(
@@ -33,20 +33,22 @@ class Contacts extends StatelessWidget {
                     child: SizedBox(
                         width: deviceWidth * (10.0 / width),
                         height: deviceHeight * (50.0 / height),
-                        child: const CircularProgressIndicator()),
+                        child: const CircularProgressIndicator(
+                          color: Colors.cyan,
+                        )),
                   );
                 }
                 return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
                       Contact contact = snapshot.data![index];
+                      print(snapshot.data![index]);
                       return ListTile(
                         leading: const CircleAvatar(
                           radius: 20.0,
                           child: Icon(Icons.person),
                         ),
                         title: Text(contact.displayName),
-                        subtitle: Text(contact.phones[0].toString()),
                       );
                     });
               },

@@ -5,7 +5,7 @@ class Constants {
   String apiKey = 'AIzaSyBLfuL7Vztx2v3HCc73oYRa1oU5KEJyLcU';
 
   String ngrokurl =
-      'https://4375-2409-40c0-1048-fe65-29d1-15a0-9476-5049.ngrok-free.app';
+      'https://faa8-2409-40c0-1048-fe65-597d-2429-50c1-3560.ngrok-free.app';
   String base_url = 'http://13.200.249.129:8080';
 
   String prompt = """

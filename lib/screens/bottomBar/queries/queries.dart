@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/helpers/Utils.dart';
@@ -277,8 +278,10 @@ class _AudioInputState extends State<AudioInput>
                           }
                         } else {
                           if (lst[0] == 'call') {
+                            lastWords = lst[2];
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => const Contacts()));
+                            _callNumber();
                           }
                         }
                       } else {
@@ -377,5 +380,10 @@ class _AudioInputState extends State<AudioInput>
     final name = basename(path);
     final audio = File('${directory.path}/$name');
     return File(path).copy(audio.path);
+  }
+
+  _callNumber() async {
+    const number = '+91 98192 81311'; //set the number here
+    bool? res = await FlutterPhoneDirectCaller.callNumber(number);
   }
 }

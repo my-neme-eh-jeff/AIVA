@@ -28,9 +28,9 @@ class _SettingState extends State<Setting> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: const Text(
-              "Settings",
-              style: TextStyle(
+            title: Text(
+              AppLocalizations.of(context)!.setting,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
@@ -45,9 +45,9 @@ class _SettingState extends State<Setting> {
                 Expanded(
                   child: SettingsList(brightness: Brightness.dark, sections: [
                     SettingsSection(
-                        title: const Text(
-                          "Language",
-                          style: TextStyle(
+                        title: Text(
+                          AppLocalizations.of(context)!.language,
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Colors.cyan),
@@ -65,9 +65,9 @@ class _SettingState extends State<Setting> {
                           ),
                         ]),
                     SettingsSection(
-                        title: const Text(
-                          "Appearance",
-                          style: TextStyle(
+                        title: Text(
+                          AppLocalizations.of(context)!.home,
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Colors.cyan),
@@ -76,7 +76,8 @@ class _SettingState extends State<Setting> {
                           SettingsTile.switchTile(
                             initialValue: dark ?? false,
                             leading: const Icon(Icons.dark_mode_outlined),
-                            title: const Text("Dark theme"),
+                            title:
+                                Text(AppLocalizations.of(context)!.darkTheme),
                             onToggle: (value) async {
                               var prefs = await SharedPreferences.getInstance();
                               await prefs.setBool('dark', value);
@@ -93,13 +94,13 @@ class _SettingState extends State<Setting> {
                           ),
                           SettingsTile(
                             leading: const Icon(Icons.display_settings),
-                            title: const Text('Display'),
+                            title: Text(AppLocalizations.of(context)!.display),
                           ),
                         ]),
                     SettingsSection(
-                        title: const Text(
-                          "Privacy",
-                          style: TextStyle(
+                        title: Text(
+                          AppLocalizations.of(context)!.privacy,
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Colors.cyan),
@@ -107,17 +108,18 @@ class _SettingState extends State<Setting> {
                         tiles: <SettingsTile>[
                           SettingsTile(
                             leading: const Icon(Icons.privacy_tip_outlined),
-                            title: const Text("Permissions"),
+                            title:
+                                Text(AppLocalizations.of(context)!.permissions),
                           ),
                           SettingsTile(
                             leading: const Icon(Icons.security_outlined),
-                            title: const Text('Security'),
+                            title: Text(AppLocalizations.of(context)!.security),
                           ),
                         ]),
                     SettingsSection(
-                        title: const Text(
-                          "Accounts",
-                          style: TextStyle(
+                        title: Text(
+                          AppLocalizations.of(context)!.accounts,
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               color: Colors.cyan),
@@ -126,11 +128,12 @@ class _SettingState extends State<Setting> {
                           SettingsTile(
                             leading: const Icon(
                                 Icons.supervised_user_circle_outlined),
-                            title: const Text("Multiple Users"),
+                            title: Text(
+                                AppLocalizations.of(context)!.multipleUsers),
                           ),
                           SettingsTile(
                             leading: const Icon(Icons.feedback_outlined),
-                            title: const Text('Feedback'),
+                            title: Text(AppLocalizations.of(context)!.feedback),
                           ),
                         ]),
                   ]),
