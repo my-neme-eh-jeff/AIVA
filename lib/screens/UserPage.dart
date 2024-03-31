@@ -1,4 +1,3 @@
-import 'package:untitled1/screens/bottomBar/queries.dart';
 import 'package:untitled1/screens/bottomBar/terminal/terminal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../constants.dart';
 import 'bottomBar/chatGemini/gemini.dart';
+import 'bottomBar/queries/queries.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key, required this.token});
@@ -34,8 +34,11 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+    double deviceHeight = Constants().deviceHeight,
+        deviceWidth = Constants().deviceWidth;
+
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Scaffold(

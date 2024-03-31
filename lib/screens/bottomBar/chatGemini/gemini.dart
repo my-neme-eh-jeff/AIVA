@@ -3,12 +3,11 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:untitled1/helpers/Utils.dart';
-import 'package:untitled1/screens/bottomBar/chatGemini/autocompleteBox.dart';
 import '../../../constants.dart';
-import '../../../models/AutocompleteModel.dart';
 import 'chatBubble.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +16,8 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+List<String> lst = [];
 
 String apiKey = Constants().apiKey;
 
@@ -45,10 +46,24 @@ class _GeminiPageState extends State<GeminiPage> {
 
   String suggestions = '';
 
-  List<String> lst = [];
   bool readOnly = false;
   File? image;
   String? name;
+
+  late final LocalAuthentication auth;
+  bool _supportState = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = LocalAuthentication();
+    auth.isDeviceSupported().then((bool isSupported) {
+      print("hi$isSupported");
+      setState(() {
+        _supportState = isSupported;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,38 +122,38 @@ class _GeminiPageState extends State<GeminiPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         for (int i = 0; i < lst1.length; i++)
-                          if(!lst1[i].contains('#'))
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                                width: width * (200.0 / deviceWidth),
-                                height: height * (20.0 / deviceHeight),
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.cyan[500]),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(7.0),
-                                      ))),
-                                  onPressed: () {
-                                    _controller.text =
-                                        "${_controller.text} ${lst1[i]}";
-                                  },
-                                  child: Text(
-                                    lst1[i],
-                                    style: const TextStyle(
-                                      fontFamily: "productSansReg",
-                                      fontSize: 15.0,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                          if (!lst1[i].contains('#'))
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                  width: width * (200.0 / deviceWidth),
+                                  height: height * (20.0 / deviceHeight),
+                                  child: ElevatedButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.cyan[500]),
+                                        shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                            RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(7.0),
+                                        ))),
+                                    onPressed: () {
+                                      _controller.text =
+                                          "${_controller.text} ${lst1[i]}";
+                                    },
+                                    child: Text(
+                                      lst1[i],
+                                      style: const TextStyle(
+                                        fontFamily: "productSansReg",
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                )),
-                          )
+                                  )),
+                            )
                       ],
                     ),
                   )),
@@ -203,14 +218,19 @@ class _GeminiPageState extends State<GeminiPage> {
                                         response = await model.generateContent([
                                           Content.multi([prompt, ...imageParts])
                                         ]);
-                                        if (kDebugMode) {
-                                          print(response.text);
-                                        }
 
-                                        setState(() {
-                                          lst.add(response.text!);
+                                        if (response.text.contains(
+                                            "Information Retrieval")) {
+                                          lst.add((await model.generateContent([
+                                            Content.multi(
+                                                [TextPart(text), ...imageParts])
+                                          ]))
+                                              .text!);
                                           readOnly = !readOnly;
-                                        });
+                                          setState(() {});
+                                        } else {}
+
+                                        print(response.text);
                                       } else {
                                         final content = [
                                           Content.text(promptGemini + text)
@@ -218,29 +238,27 @@ class _GeminiPageState extends State<GeminiPage> {
 
                                         response = await modelText
                                             .generateContent(content);
-                                      }
 
-                                      print(response.text);
+                                        if (response.text.contains(
+                                            "Information Retrieval")) {
+                                          final contentNew = [
+                                            Content.text(text)
+                                          ];
 
-                                      try {
-                                        if (response.text == '0') {
-                                          setState(() {
-                                            lst.add(
-                                                "Okay, performing this task!");
-                                            readOnly = !readOnly;
-                                          });
+                                          lst.add((await modelText
+                                                  .generateContent(contentNew))
+                                              .text!);
+                                          readOnly = !readOnly;
+                                          setState(() {});
                                         } else {
+                                          await _fingerprintAuthenticate();
+
+                                          _callNumber();
+
                                           setState(() {
-                                            lst.add(response.text!);
                                             readOnly = !readOnly;
                                           });
                                         }
-                                      } catch (e) {
-                                        Utils.showSnackBar(e.toString());
-                                        setState(() {
-                                          lst.add("Sorry, can't answer that!");
-                                          readOnly = !readOnly;
-                                        });
                                       }
                                     },
                                     child: Icon(
@@ -261,7 +279,7 @@ class _GeminiPageState extends State<GeminiPage> {
                       onChanged: (text) async {
                         if (text.trim() != '') {
                           setState(() {
-                            lst = [];
+                            lst1 = [];
                           });
                           lst1 = await autocomplete(text);
                           setState(() {});
@@ -322,5 +340,27 @@ class _GeminiPageState extends State<GeminiPage> {
     final name = basename(path);
     final image = File('${directory.path}/$name');
     return File(path).copy(image.path);
+  }
+
+  Future<bool?> _fingerprintAuthenticate() async {
+    try {
+      bool authenticated = await auth.authenticate(
+          localizedReason:
+              "To secure your app companion in ways more than one.",
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: true,
+          ));
+      debugPrint("Authenticated: $authenticated");
+      return authenticated;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return null;
+  }
+
+  _callNumber() async {
+    const number = '+91 98192 81311';
+    await FlutterPhoneDirectCaller.callNumber(number);
   }
 }

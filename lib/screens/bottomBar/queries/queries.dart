@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:untitled1/helpers/Utils.dart';
 import 'package:untitled1/models/Whisper.dart';
 import 'package:untitled1/models/identifyUserModel.dart';
-import '../../constants.dart';
+import 'package:untitled1/screens/bottomBar/queries/contacts.dart';
+import '../../../constants.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart';
@@ -41,7 +42,10 @@ class _AudioInputState extends State<AudioInput>
   final recorder = FlutterSoundRecorder();
   final player = FlutterSoundPlayer();
 
-  bool isRecorderReady = false, gotSomeTextYo = false, isPlaying = false, isNameDisplayed = false;
+  bool isRecorderReady = false,
+      gotSomeTextYo = false,
+      isPlaying = false,
+      isNameDisplayed = false;
   String TTSLocaleID = 'en-IN', nameDisplay = "";
   String _secondLanguage = 'English';
   String ngrokurl = Constants().ngrokurl;
@@ -150,18 +154,18 @@ class _AudioInputState extends State<AudioInput>
                 SizedBox(
                   height: 20 * (height / deviceHeight),
                 ),
-                if(isNameDisplayed)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Hello ' + nameDisplay + "!",
-                    style: TextStyle(
-                        fontFamily: "productSansReg",
-                        color: Colors.cyan[500],
-                        fontWeight: FontWeight.w700,
-                        fontSize: 25),
+                if (isNameDisplayed)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Hello ' + nameDisplay + "!",
+                      style: TextStyle(
+                          fontFamily: "productSansReg",
+                          color: Colors.cyan[500],
+                          fontWeight: FontWeight.w700,
+                          fontSize: 25),
+                    ),
                   ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
@@ -258,15 +262,24 @@ class _AudioInputState extends State<AudioInput>
                         isPlaying = false;
                         await stop();
                         _controller.reset();
-                        if (kDebugMode) {
-                          print("Before translation:${lst[0]}");
-                        }
-                        Translation x = await translator.translate(lst[0],
-                            from: 'en', to: lst[1]);
-                        lastWords = x.text;
-                        gotSomeTextYo = true;
-                        if (kDebugMode) {
-                          print("After translation:$lastWords");
+
+                        if (!['files', 'email', 'call', 'web_search']
+                            .contains(lst[0])) {
+                          if (kDebugMode) {
+                            print("Before translation:${lst[0]}");
+                          }
+                          Translation x = await translator.translate(lst[0],
+                              from: 'en', to: lst[1]);
+                          lastWords = x.text;
+                          gotSomeTextYo = true;
+                          if (kDebugMode) {
+                            print("After translation:$lastWords");
+                          }
+                        } else {
+                          if (lst[0] == 'call') {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Contacts()));
+                          }
                         }
                       } else {
                         isPlaying = true;
@@ -349,8 +362,12 @@ class _AudioInputState extends State<AudioInput>
     }
 
     var data = jsonDecode(responseBody);
-    var bodyData = WhisperModel.fromJson(data);
-    lst = [bodyData.message, bodyData.srcLang];
+
+    if (responseBody.contains("predicted")) {
+      lst.addAll([data['predicted'], data['src_lang'], data['src']]);
+    } else {
+      lst.addAll([data['message'], data['src_lang'], data['src']]);
+    }
 
     return lst;
   }
