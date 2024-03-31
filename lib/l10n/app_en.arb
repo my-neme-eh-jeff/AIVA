@@ -119,7 +119,7 @@
     "@login": {
         "description": "For login"
     },
-    "loginCatchphrase": "AI-Powered and Ready to Transform Indian Railways.",
+    "loginCatchphrase": "AI powered voice assistant empowering automated query resolution.",
     "@loginCatchphrase": {
         "description": "for Login catchphrase"
     },
@@ -135,8 +135,8 @@
     "@landingPageThree": {
         "description": "For third landing page"
     },
-    "railwayBuddy": "RailwayMitra",
-    "@landingPageThree": {
+    "railwayBuddy": "AIVA",
+    "@railwayBuddy": {
         "description": "For railway buddy"
     },
      "skip": "Skip",
@@ -155,7 +155,7 @@
     "@text": {
         "description": "For bottombar home"
     },
-    "news": "News",
+    "news": "Terminal",
     "@news": {
         "description": "For bottombar news"
     },
@@ -166,5 +166,41 @@
     "ivrs": "IVRS",
     "@ivrs": {
         "description": "For IVRS"
+    },
+    "terminal": "Terminal",
+    "@terminal": {
+        "description": "For terminal"
+    },
+    "darkTheme": "Dark Theme",
+    "@darkTheme": {
+        "description": "For dark theme"
+    },
+    "display": "Display",
+    "@display": {
+        "description": "For display"
+    },
+    "privacy": "Privacy",
+    "@privacy": {
+        "description": "For privacy"
+    },
+    "permissions": "Permissions",
+    "@permissions": {
+        "description": "For permissions"
+    },
+    "security": "Security",
+    "@security": {
+        "description": "For security"
+    },
+    "accounts": "Accounts",
+    "@accounts": {
+        "description": "For accounts"
+    },
+    "multipleUsers": "Multiple Users",
+    "@multipleUsers": {
+        "description": "For multiple users"
+    },
+    "feedback": "Feedback",
+    "@feedback": {
+        "description": "For feedback"
     }
 }

@@ -21,16 +21,13 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   int currentIndex = 1;
   final screens = const [GeminiPage(), AudioInput(), TerminalScreen()];
-  final List<String> titleList = const ['Text/image', 'Voice', 'Terminal'];
+
   bool? isLoggedIn = false;
 
   double deviceHeight = Constants().deviceHeight,
       deviceWidth = Constants().deviceWidth;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  late List<String> titleList;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +36,12 @@ class _UserPageState extends State<UserPage> {
 
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
+    titleList = [
+      AppLocalizations.of(context)!.text,
+      AppLocalizations.of(context)!.audio,
+      AppLocalizations.of(context)!.terminal
+    ];
 
     return SafeArea(
       child: Scaffold(
@@ -98,10 +101,10 @@ class _UserPageState extends State<UserPage> {
               items: [
                 BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.announcement_outlined,
+                      Icons.text_fields_outlined,
                       color: Colors.grey[900],
                     ),
-                    label: "Announce"),
+                    label: AppLocalizations.of(context)!.text),
                 BottomNavigationBarItem(
                   icon: FaIcon(
                     Icons.question_answer_outlined,
@@ -111,10 +114,10 @@ class _UserPageState extends State<UserPage> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.train_outlined,
+                    Icons.terminal,
                     color: Colors.grey[900],
                   ),
-                  label: AppLocalizations.of(context)!.news,
+                  label: AppLocalizations.of(context)!.terminal,
                 ),
               ],
             ),
