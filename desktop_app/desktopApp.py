@@ -9,7 +9,7 @@ import wave
 import threading
 import speech_recognition as sr
 import pathlib
-import textwrap
+import textwrap, requests
 # import google.generativeai as genai
 from github_commands import GitHubClient
 
@@ -176,6 +176,27 @@ def record_audio(stop_event):
     wf.close()
     print(f"Audio saved as {filename}")
 
+    # Send recorded audio to API
+    url = "https://d56b-2409-40c0-1048-fe65-597d-2429-50c1-3560.ngrok-free.app/file"
+    files = {'file_audio': open(filename, 'rb')}
+    response = requests.post(url, files=files)
+    
+    if response.status_code == 200:
+        # Receive and process API response
+        api_response = response.json()
+        lst=api_response
+        print(api_response)
+        action=api_response[0]
+        file_name=api_response[1]
+        print("Action:", action)
+        print("File Name:", file_name)
+
+        # Search for the file in the system
+        file_paths = search_file(file_name)
+        print("File Paths:", file_paths)
+        # Handle the file paths as needed
+    IS_RECORDING = False
+
     # Perform speech recognition
 #     recognizer = sr.Recognizer()
 #     with sr.AudioFile(filename) as source:
@@ -257,6 +278,20 @@ def record_audio(stop_event):
 
 #     return file_paths
 test_microphone()
+
+def search_file(file_name):
+    # Initialize a list to store the absolute paths of the file
+    file_paths = []
+
+    # Walk through the file system starting from the root directory
+    for root_dir, _, files in os.walk('/'):
+        # Check if the file exists in the current directory
+        if file_name in files:
+            # If the file exists, get its absolute path and add it to the list
+            file_path = os.path.join(root_dir, file_name)
+            file_paths.append(file_path)
+
+    return file_paths
 
 
 def record_thread(stop_event):
