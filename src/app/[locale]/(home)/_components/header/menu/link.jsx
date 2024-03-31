@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import gsap from 'gsap';
 import { Link } from '@/app/navigation';
 
-export default function link({ data, index, href }) {
+export default function LinkComponent({ data, index, href }) {
     const { title, description, images } = data;
     const outer = useRef(null);
     const inner = useRef(null);

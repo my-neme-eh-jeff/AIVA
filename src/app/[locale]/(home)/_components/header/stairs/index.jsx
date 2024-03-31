@@ -8,19 +8,20 @@ export default function index() {
   return (
     <motion.div className={styles.stairs}>
       {
-        [...Array(5)].map( (_, index) => {
-          return <motion.div 
-          variants={height} 
-          {...mountAnim}
-          custom={4 - index} 
-          className={styles.stair}>
+        [...Array(5)].map((_, index) => {
+          return <motion.div
+            key={index}
+            variants={height}
+            {...mountAnim}
+            custom={4 - index}
+            className={styles.stair}>
           </motion.div>
         })
       }
-      <motion.div 
-      variants={background} 
-      {...mountAnim}
-      className={styles.background}>
+      <motion.div
+        variants={background}
+        {...mountAnim}
+        className={styles.background}>
       </motion.div>
     </motion.div>
   )

@@ -8,7 +8,7 @@ import Link from './link';
 import styles from './style.module.scss';
 
 
-export default function index({ closeMenu }) {
+export default function Index({ closeMenu }) {
   const t = useTranslations("Menu");
   const menu = [
     {
