@@ -4,32 +4,33 @@ class Constants {
 
   String apiKey = 'AIzaSyBLfuL7Vztx2v3HCc73oYRa1oU5KEJyLcU';
 
-  String ngrokurl = 'https://d078-35-199-190-169.ngrok-free.app';
+  String ngrokurl = 'https://0f73-35-233-214-25.ngrok-free.app';
   String base_url = 'http://13.200.249.129:8080';
 
   String prompt = """
       [CONTEXT]
-      You are an AI classification model that needs to classify if the user query pertains to Information Retreival or not.
-      
+      You are an AI classification model that needs to classify if the user query pertains to Information Retrieval or not.
+    
       [INSTRUCTIONS]
       You will be provided a user query, and you must indicate whether the query requires the extraction of information such as facts, summaries, news articles, etc.
       The query shall also be considered Information Retrieval if it asks to perform basic or complex calculations.
-      
+    
+    
       [EXAMPLES]
       1. User query: "How's the weather today?"
-         Type: Information Retrieval
-      
+        Type: Information Retrieval
+    
       2. User query: "Set a reminder for tomorrow's meeting at 10 AM."
-         Type: None
-      
+        Type: None
+    
       3. User query: "What's your favorite movie?"
-         Type: Information Retrieval
-      
+        Type: Information Retrieval
+    
       4. User query: "Find the nearest coffee shop."
-         Type: None
-      
+        Type: None
+    
       5. User query: "What is 30% of 50?"
-          Type: Information Retrieval
+         Type: Information Retrieval
       
       The query is: """;
 

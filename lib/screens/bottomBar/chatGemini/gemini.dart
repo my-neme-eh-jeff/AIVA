@@ -1,12 +1,17 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:untitled1/helpers/Utils.dart';
+import 'package:untitled1/screens/bottomBar/chatGemini/autocompleteBox.dart';
 import '../../../constants.dart';
+import '../../../models/AutocompleteModel.dart';
 import 'chatBubble.dart';
 import 'package:path/path.dart';
+import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -33,6 +38,8 @@ class _GeminiPageState extends State<GeminiPage> {
       deviceWidth = Constants().deviceWidth;
   String promptGemini = Constants().prompt;
 
+  List lst1 = [];
+
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -47,8 +54,6 @@ class _GeminiPageState extends State<GeminiPage> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
-    print(promptGemini);
 
     return SafeArea(
       child: Scaffold(
@@ -95,6 +100,48 @@ class _GeminiPageState extends State<GeminiPage> {
                         ),
                       ),
                     ),
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (int i = 0; i < lst1.length; i++)
+                          if(!lst1[i].contains('#'))
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                width: width * (200.0 / deviceWidth),
+                                height: height * (20.0 / deviceHeight),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.cyan[500]),
+                                      shape: MaterialStateProperty.all<
+                                              RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(7.0),
+                                      ))),
+                                  onPressed: () {
+                                    _controller.text =
+                                        "${_controller.text} ${lst1[i]}";
+                                  },
+                                  child: Text(
+                                    lst1[i],
+                                    style: const TextStyle(
+                                      fontFamily: "productSansReg",
+                                      fontSize: 15.0,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )),
+                          )
+                      ],
+                    ),
+                  )),
                   Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: SizedBox(
@@ -212,18 +259,43 @@ class _GeminiPageState extends State<GeminiPage> {
                         fillColor: Colors.white,
                       ),
                       onChanged: (text) async {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Container();
-                            });
+                        if (text.trim() != '') {
+                          setState(() {
+                            lst = [];
+                          });
+                          lst1 = await autocomplete(text);
+                          setState(() {});
+                          print("This is lst1:$lst1");
+                        }
                       },
                     )),
                   ),
-                  Text("Suggestions: ")
                 ])),
       ),
     );
+  }
+
+  Future<List<dynamic>> autocomplete(String text) async {
+    List<dynamic> returnList = [];
+    String apiUrl =
+        "https://api-inference.huggingface.co/models/google-bert/bert-base-uncased";
+    var headers = {
+      "Authorization": "Bearer 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"
+    };
+    http.Response res = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: jsonEncode(<String, String>{
+        'inputs': '$text [MASK].',
+      }),
+    );
+    var lst2 = jsonDecode(res.body);
+    print(lst2);
+    for (int i = 0; i < lst2.length - 2; i++) {
+      returnList.add(lst2[i]["token_str"]);
+    }
+    print(returnList);
+    return returnList;
   }
 
   Future pickImage() async {

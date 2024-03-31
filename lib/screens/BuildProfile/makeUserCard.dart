@@ -4,15 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:translator/translator.dart';
 import 'package:untitled1/helpers/Utils.dart';
 import 'package:untitled1/models/BuildProfileModel.dart';
 import '../../constants.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:path/path.dart';
@@ -295,8 +292,8 @@ class _MakeUserCardState extends State<MakeUserCard>
     );
   }
 
-  Future<List<dynamic?>> sendAudio1(File? audioPath, String name) async {
-    List<dynamic?> lst = [];
+  Future<List<dynamic>> sendAudio1(File? audioPath, String name) async {
+    List<dynamic> lst = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     var response = http.MultipartRequest(

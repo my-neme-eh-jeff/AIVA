@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:untitled1/helpers/Utils.dart';
 import 'package:untitled1/models/Whisper.dart';
+import 'package:untitled1/models/identifyUserModel.dart';
 import '../../constants.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -16,6 +19,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:translator/translator.dart';
 
 var lst = [];
+var authLst = [];
 
 class AudioInput extends StatefulWidget {
   const AudioInput({super.key});
@@ -37,11 +41,13 @@ class _AudioInputState extends State<AudioInput>
   final recorder = FlutterSoundRecorder();
   final player = FlutterSoundPlayer();
 
-  bool isRecorderReady = false, gotSomeTextYo = false, isPlaying = false;
-  String TTSLocaleID = 'en-IN';
+  bool isRecorderReady = false, gotSomeTextYo = false, isPlaying = false, isNameDisplayed = false;
+  String TTSLocaleID = 'en-IN', nameDisplay = "";
   String _secondLanguage = 'English';
   String ngrokurl = Constants().ngrokurl;
   final translator = GoogleTranslator();
+
+  String base_url = Constants().base_url;
 
   Future record() async {
     if (!isRecorderReady) return;
@@ -55,10 +61,19 @@ class _AudioInputState extends State<AudioInput>
     if (kDebugMode) {
       print('Recorded audio: $path');
     }
+
+    authLst = await sendAudioForUser(audioPath);
+    setState(() {
+      nameDisplay = authLst[1];
+      isNameDisplayed = true;
+    });
+
     lst = await sendAudio(audioPath);
+
     if (kDebugMode) {
       print(lst);
     }
+
     if (true) {
       gotSomeTextYo = true;
       setState(() {
@@ -134,6 +149,18 @@ class _AudioInputState extends State<AudioInput>
               children: [
                 SizedBox(
                   height: 20 * (height / deviceHeight),
+                ),
+                if(isNameDisplayed)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Hello ' + nameDisplay + "!",
+                    style: TextStyle(
+                        fontFamily: "productSansReg",
+                        color: Colors.cyan[500],
+                        fontWeight: FontWeight.w700,
+                        fontSize: 25),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -235,7 +262,7 @@ class _AudioInputState extends State<AudioInput>
                           print("Before translation:${lst[0]}");
                         }
                         Translation x = await translator.translate(lst[0],
-                            from: 'en', to: 'hi');
+                            from: 'en', to: lst[1]);
                         lastWords = x.text;
                         gotSomeTextYo = true;
                         if (kDebugMode) {
@@ -275,8 +302,37 @@ class _AudioInputState extends State<AudioInput>
     );
   }
 
-  Future<List<dynamic?>> sendAudio(File? audioPath) async {
-    List<dynamic?> lst = [];
+  Future<List<dynamic>> sendAudioForUser(File? audioPath) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    List<dynamic> lst = [];
+    var response = http.MultipartRequest(
+      'POST',
+      Uri.parse('$base_url/voice-match/'),
+    );
+    response.fields['token'] = token!;
+    response.files.add(http.MultipartFile(
+        'file', audioPath!.readAsBytes().asStream(), audioPath.lengthSync(),
+        filename: basename(audioPath.path),
+        contentType: MediaType('application', 'octet-stream')));
+    var res = await response.send();
+    var responseBody = await res.stream.bytesToString();
+    if (kDebugMode) {
+      print(responseBody);
+      print(res.statusCode);
+    }
+
+    var data = jsonDecode(responseBody);
+    var bodyData = IdentifyUserModel.fromJson(data);
+    lst = [bodyData.success, bodyData.name];
+
+    Utils.showSnackBar1("Welcome, ${lst[1]}!");
+
+    return lst;
+  }
+
+  Future<List<dynamic>> sendAudio(File? audioPath) async {
+    List<dynamic> lst = [];
     var response = http.MultipartRequest(
       'POST',
       Uri.parse('$ngrokurl/transcription'),
