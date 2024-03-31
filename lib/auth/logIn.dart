@@ -101,8 +101,8 @@ class _Login extends State<Login> {
                         padding: const EdgeInsets.only(top: 60.0),
                         child: Text(
                           AppLocalizations.of(context)!.railwayBuddy,
-                          style: TextStyle(
-                              color: Colors.cyan[500],
+                          style: const TextStyle(
+                              color: Colors.cyan,
                               fontSize: 50.0,
                               fontWeight: FontWeight.w700,
                               fontFamily: "productSansReg"),
@@ -219,7 +219,7 @@ class _Login extends State<Login> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.all(
-                                        Colors.cyan[500],
+                                        Colors.cyan,
                                       ),
                                       shape: MaterialStateProperty.all<
                                               RoundedRectangleBorder>(
@@ -234,7 +234,6 @@ class _Login extends State<Login> {
                                           _passwordController.text.trim());
 
                                       if (lst[1] == 200) {
-
                                         if (kDebugMode) {
                                           print(
                                               "Fingerprint authenticated: $_supportState");
@@ -337,11 +336,11 @@ class _Login extends State<Login> {
                                           },
                                         text:
                                             " ${AppLocalizations.of(context)!.forSignUp}.",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontFamily: "productSansReg",
                                             decoration:
                                                 TextDecoration.underline,
-                                            color: Colors.cyan[500]!))
+                                            color: Colors.cyan))
                                   ]),
                             ),
                           ],

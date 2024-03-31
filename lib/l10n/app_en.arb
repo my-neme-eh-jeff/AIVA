@@ -202,5 +202,9 @@
     "feedback": "Feedback",
     "@feedback": {
         "description": "For feedback"
+    },
+    "addProfiles": "Add 3 Profiles",
+    "@addProfiles": {
+        "description": "For adding profiles"
     }
 }

@@ -159,9 +159,9 @@ class _AudioInputState extends State<AudioInput>
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'Hello ' + nameDisplay + "!",
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontFamily: "productSansReg",
-                          color: Colors.cyan[500],
+                          color: Colors.cyan,
                           fontWeight: FontWeight.w700,
                           fontSize: 25),
                     ),
@@ -170,9 +170,9 @@ class _AudioInputState extends State<AudioInput>
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     AppLocalizations.of(context)!.speakMic,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontFamily: "productSansReg",
-                        color: Colors.cyan[500],
+                        color: Colors.cyan,
                         fontWeight: FontWeight.w700,
                         fontSize: 25),
                   ),
@@ -193,10 +193,10 @@ class _AudioInputState extends State<AudioInput>
                           twoDigits(duration.inSeconds.remainder(60));
                       return Text(
                         "$twoDigitMinutes:$twoDigitSeconds s",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
-                          color: Colors.cyan[500],
+                          color: Colors.cyan,
                           fontFamily: "productSansReg",
                         ),
                       );
@@ -207,7 +207,7 @@ class _AudioInputState extends State<AudioInput>
                 if (isPlaying)
                   Center(
                       child: LoadingAnimationWidget.staggeredDotsWave(
-                    color: Colors.cyan[500]!,
+                    color: Colors.cyan,
                     size: 20 * (height / deviceHeight),
                   )),
                 if (!isPlaying)

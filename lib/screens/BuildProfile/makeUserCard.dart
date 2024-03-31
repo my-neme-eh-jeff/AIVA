@@ -194,7 +194,7 @@ class _MakeUserCardState extends State<MakeUserCard>
                                     Center(
                                         child: LoadingAnimationWidget
                                             .staggeredDotsWave(
-                                      color: Colors.cyan[500]!,
+                                      color: Colors.cyan,
                                       size: 20 * (height / deviceHeight),
                                     )),
                                   Container(

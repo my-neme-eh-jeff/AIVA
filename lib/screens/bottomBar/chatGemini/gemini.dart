@@ -132,7 +132,7 @@ class _GeminiPageState extends State<GeminiPage> {
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(
-                                                Colors.cyan[500]),
+                                                Colors.cyan),
                                         shape: MaterialStateProperty.all<
                                                 RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
@@ -169,10 +169,10 @@ class _GeminiPageState extends State<GeminiPage> {
                         ),
                         filled: true,
                         hintText: "Enter text and/or image",
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           fontSize: 17.5,
                           fontWeight: FontWeight.w500,
-                          color: Colors.cyan[500],
+                          color: Colors.cyan,
                         ),
                         suffix: SizedBox(
                           width: width * (200 / deviceWidth),
@@ -183,10 +183,10 @@ class _GeminiPageState extends State<GeminiPage> {
                                     onTap: () async {
                                       var path = await pickImage();
                                     },
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.image,
                                       size: 25,
-                                      color: Colors.cyan[500],
+                                      color: Colors.cyan,
                                     ),
                                   ),
                                   SizedBox(
@@ -261,10 +261,10 @@ class _GeminiPageState extends State<GeminiPage> {
                                         }
                                       }
                                     },
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.send_rounded,
                                       size: 25,
-                                      color: Colors.cyan[500],
+                                      color: Colors.cyan,
                                     ),
                                   ),
                                 ])

@@ -69,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20),
                       child: Text(
-                         AppLocalizations.of(context)!.yourHistory,
+                        AppLocalizations.of(context)!.yourHistory,
                         style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -91,8 +91,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Colors.cyan[700]!,
-                        Colors.cyan[400]!,
+                        Colors.grey[900]!,
+                        Colors.black,
+                        Colors.grey[900]!,
                       ]),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),

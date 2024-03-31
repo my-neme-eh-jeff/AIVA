@@ -23,7 +23,7 @@ class _AutoCompleteBoxState extends State<AutoCompleteBox> {
         height: height * (20.0 / deviceHeight),
         child: ElevatedButton(
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.cyan[500]),
+              backgroundColor: MaterialStateProperty.all(Colors.cyan),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(7.0),

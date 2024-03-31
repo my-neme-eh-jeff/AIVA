@@ -30,9 +30,9 @@ class _BuildProfileState extends State<BuildProfile> {
           elevation: 0,
           backgroundColor: Colors.black,
           title: Text(
-            "Add 3 Profiles",
-            style: TextStyle(
-                color: Colors.cyan[500],
+            AppLocalizations.of(context)!.addProfiles,
+            style: const TextStyle(
+                color: Colors.cyan,
                 fontSize: 25.0,
                 fontWeight: FontWeight.w700,
                 fontFamily: "productSansReg"),
@@ -60,19 +60,17 @@ class _BuildProfileState extends State<BuildProfile> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.cyan[500]),
+                            MaterialStateProperty.all(Colors.cyan),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.0),
                         ))),
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  UserPage(
-                                    token: widget.token,
-                                  )));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => UserPage(
+                                token: widget.token,
+                              )));
                     },
                     child: Text(
                       AppLocalizations.of(context)!.enter,

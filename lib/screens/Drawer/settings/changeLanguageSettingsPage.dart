@@ -52,7 +52,7 @@ class _SelectLanguageDropdownSettingState
                             Navigator.pop(context);
                           },
                           icon: const Icon(Icons.arrow_back_sharp),
-                          color: Colors.cyan[500],
+                          color: Colors.cyan,
                         ),
                       ),
                     ),

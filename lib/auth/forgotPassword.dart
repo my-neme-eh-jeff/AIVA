@@ -73,7 +73,7 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
                                     Navigator.pop(context);
                                   },
                                   icon: const Icon(Icons.arrow_back_sharp),
-                                  color: Colors.cyan[500],
+                                  color: Colors.cyan,
                                 ),
                               ),
                             ),
@@ -81,9 +81,9 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
                               padding: const EdgeInsets.only(top: 230),
                               child: Text(
                                 AppLocalizations.of(context)!.resetPass,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: "productSansReg",
-                                  color: Colors.cyan[500],
+                                  color: Colors.cyan,
                                   fontSize: 25.0,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -134,7 +134,7 @@ class _ForgotPassWordState extends State<ForgotPassWord> {
                                   style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.all(
-                                              Colors.cyan[500]),
+                                              Colors.cyan),
                                       shape: MaterialStateProperty.all<
                                               RoundedRectangleBorder>(
                                           RoundedRectangleBorder(

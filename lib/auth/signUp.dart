@@ -90,20 +90,19 @@ class _SignUpState extends State<SignUp> {
                             child: CircleAvatar(
                               backgroundColor: Colors.white,
                               child: IconButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                icon: const Icon(Icons.arrow_back_sharp),
-                                color: Colors.cyan[500],
-                              ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(Icons.arrow_back_sharp),
+                                  color: Colors.cyan),
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.only(top: 100),
                             child: Text(
                               AppLocalizations.of(context)!.forSignUp,
-                              style: TextStyle(
-                                  color: Colors.cyan[500],
+                              style: const TextStyle(
+                                  color: Colors.cyan,
                                   fontSize: 50.0,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: "productSansReg"),
@@ -323,7 +322,7 @@ class _SignUpState extends State<SignUp> {
                                       style: ButtonStyle(
                                           backgroundColor:
                                               MaterialStateProperty.all(
-                                                  Colors.cyan[500]),
+                                                  Colors.cyan),
                                           shape: MaterialStateProperty.all<
                                                   RoundedRectangleBorder>(
                                               RoundedRectangleBorder(

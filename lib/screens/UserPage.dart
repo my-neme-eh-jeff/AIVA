@@ -49,8 +49,8 @@ class _UserPageState extends State<UserPage> {
         appBar: AppBar(
           title: Text(
             titleList[currentIndex],
-            style: TextStyle(
-                color: Colors.cyan[500],
+            style: const TextStyle(
+                color: Colors.cyan,
                 fontSize: 25.0,
                 fontWeight: FontWeight.w700,
                 fontFamily: "productSansReg"),
@@ -88,7 +88,7 @@ class _UserPageState extends State<UserPage> {
               topRight: Radius.circular(30.0),
             ),
             child: BottomNavigationBar(
-              backgroundColor: Colors.cyan[500],
+              backgroundColor: Colors.cyan,
               selectedItemColor: Colors.black,
               selectedFontSize: 18,
               unselectedFontSize: 14,

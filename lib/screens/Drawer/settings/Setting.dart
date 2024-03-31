@@ -28,9 +28,16 @@ class _SettingState extends State<Setting> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Settings"),
-            backgroundColor: Colors.black,
+            title: const Text(
+              "Settings",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            backgroundColor: Colors.cyan,
           ),
+          backgroundColor: Colors.black,
           body: FutureBuilder(
             future: getDark(),
             builder: (context, snapshot) => Column(
@@ -43,7 +50,7 @@ class _SettingState extends State<Setting> {
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black),
+                              color: Colors.cyan),
                         ),
                         tiles: <SettingsTile>[
                           SettingsTile(
@@ -63,7 +70,7 @@ class _SettingState extends State<Setting> {
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black),
+                              color: Colors.cyan),
                         ),
                         tiles: <SettingsTile>[
                           SettingsTile.switchTile(
@@ -95,7 +102,7 @@ class _SettingState extends State<Setting> {
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black),
+                              color: Colors.cyan),
                         ),
                         tiles: <SettingsTile>[
                           SettingsTile(
@@ -113,7 +120,7 @@ class _SettingState extends State<Setting> {
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black),
+                              color: Colors.cyan),
                         ),
                         tiles: <SettingsTile>[
                           SettingsTile(
