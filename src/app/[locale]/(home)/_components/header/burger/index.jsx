@@ -2,7 +2,7 @@
 import { useTranslations } from 'next-intl';
 import styles from './style.module.scss';
 
-export default function ({ openMenu }) {
+export default function Index({ openMenu }) {
     const t = useTranslations();
 
     return (
