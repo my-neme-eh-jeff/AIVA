@@ -1,6 +1,6 @@
 # TechTitans_CSX
 
-#Tech Stack
+# Tech Stack
 FastAPI
 Gemini
 Elevenlabs
@@ -8,7 +8,7 @@ WhisperX
 Selenium
 Ngrok
 
-#Features
+# Features
 End to end integrated AI personal assistant
 Integrated LLM through Gemini to answer day to day and trivial questions
 Send emails to your contacts with an auto generated subject
