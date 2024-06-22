@@ -1,5 +1,9 @@
 # TechTitans_CSX
 
+
+https://github.com/my-neme-eh-jeff/AIVA/assets/112639928/d034032b-d48f-442e-8c7b-89633f1cae5c
+
+
 # Tech Stack
 <ul>
   <li>FastAPI</li>
